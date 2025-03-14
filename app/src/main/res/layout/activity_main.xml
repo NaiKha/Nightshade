@@ -44,7 +44,7 @@
         android:backgroundTint="#6F4E37"
         android:text="About"
         android:textColor="#FFF5EE"
-        app:layout_constraintBaseline_toBaselineOf="@+id/activities"
+        app:layout_constraintBaseline_toBaselineOf="@+id/movement"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -55,17 +55,17 @@
         android:backgroundTint="#6F4E37"
         android:text="Timer"
         android:textColor="#FFF5EE"
-        app:layout_constraintBaseline_toBaselineOf="@+id/activities"
+        app:layout_constraintBaseline_toBaselineOf="@+id/movement"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/activities"
+        android:id="@+id/movement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="237dp"
         android:backgroundTint="#6F4E37"
-        android:text="Activities"
+        android:text="Movement"
         android:textColor="#FFF5EE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/timer" />

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF5EE"
+    tools:context=".Timer">
+
+
+    <TextView
+        android:id="@+id/card1"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginLeft="40px"
+        android:background="#62C7C7C3"
+        android:fontFamily="@font/oswald_extralight"
+        android:gravity="center_horizontal"
+        android:text="29"
+        android:textColor="#6E4E37"
+        android:textSize="100sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/start_btn"
+        app:layout_constraintEnd_toStartOf="@+id/textView4"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/card2"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:background="#62C7C7C3"
+        android:fontFamily="@font/oswald_extralight"
+        android:gravity="center_horizontal"
+        android:text="05"
+        android:textColor="#6E4E37"
+        android:textSize="100sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/start_btn"
+        app:layout_constraintEnd_toStartOf="@+id/textView10"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/card3"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginRight="40px"
+        android:background="#62C7C7C3"
+        android:fontFamily="@font/oswald_extralight"
+        android:gravity="center_horizontal"
+        android:text="10"
+        android:textColor="#6E4E37"
+        android:textSize="100sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/reset_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toEndOf="@+id/textView10"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=":"
+        android:textColor="#6E4E37"
+        android:textSize="60sp"
+        app:layout_constraintTop_toTopOf="@+id/card1"
+        app:layout_constraintBottom_toBottomOf="@+id/card1"
+        app:layout_constraintStart_toEndOf="@+id/card1"
+        app:layout_constraintEnd_toStartOf="@+id/card2" />
+
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=":"
+        android:textColor="#6E4E37"
+        android:textSize="60sp"
+        app:layout_constraintTop_toTopOf="@+id/card2"
+        app:layout_constraintBottom_toBottomOf="@+id/card2"
+        app:layout_constraintStart_toEndOf="@+id/card2"
+        app:layout_constraintEnd_toStartOf="@+id/card3" />
+
+
+    <Button
+        android:id="@+id/start_btn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="76dp"
+        android:backgroundTint="#6F4E37"
+        android:text="Start"
+        android:textColor="#FFF5EE"
+        app:layout_constraintBottom_toTopOf="@+id/go_movement_btn"
+        app:layout_constraintEnd_toStartOf="@+id/reset_btn"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/reset_btn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="76dp"
+        android:backgroundTint="#6F4E37"
+        android:text="Reset"
+        android:textColor="#FFF5EE"
+        app:layout_constraintBottom_toTopOf="@+id/go_movement_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toEndOf="@+id/start_btn" />
+
+    <Button
+        android:id="@+id/go_movement_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="36dp"
+        android:backgroundTint="#6F4E37"
+        android:text="Go to movement"
+        android:textColor="#FFF5EE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
