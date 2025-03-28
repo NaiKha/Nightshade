@@ -8,8 +8,7 @@
     android:background="#FFF5EE"
     tools:context=".Timer">
 
-
-    <TextView
+    <EditText
         android:id="@+id/card1"
         android:layout_width="0dp"
         android:layout_height="200dp"
@@ -17,7 +16,7 @@
         android:background="#62C7C7C3"
         android:fontFamily="@font/oswald_extralight"
         android:gravity="center_horizontal"
-        android:text="29"
+        android:text="00"
         android:textColor="#6E4E37"
         android:textSize="100sp"
         android:textStyle="bold"
@@ -25,17 +24,17 @@
         app:layout_constraintEnd_toStartOf="@+id/textView4"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
+    </EditText>
 
-
-    <TextView
+    <EditText
         android:id="@+id/card2"
         android:layout_width="0dp"
         android:layout_height="200dp"
         android:background="#62C7C7C3"
         android:fontFamily="@font/oswald_extralight"
         android:gravity="center_horizontal"
-        android:text="05"
+        android:text="15"
         android:textColor="#6E4E37"
         android:textSize="100sp"
         android:textStyle="bold"
@@ -46,7 +45,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <TextView
+    <EditText
         android:id="@+id/card3"
         android:layout_width="0dp"
         android:layout_height="200dp"
@@ -54,7 +53,7 @@
         android:background="#62C7C7C3"
         android:fontFamily="@font/oswald_extralight"
         android:gravity="center_horizontal"
-        android:text="10"
+        android:text="00"
         android:textColor="#6E4E37"
         android:textSize="100sp"
         android:textStyle="bold"
