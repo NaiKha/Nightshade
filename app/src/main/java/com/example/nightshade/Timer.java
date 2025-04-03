@@ -48,7 +48,7 @@
                         int m = Integer.parseInt(mins.getText().toString());
                         int s = Integer.parseInt(secs.getText().toString());
 
-                        totalInMilliSecs = (h * 3600000) + (m * 60000) + (s * 1000);
+                        totalInMilliSecs = calculateTimeLeft(h,m,s);
                         enableEditTexts(hours, mins, secs, false);
 
 
@@ -67,13 +67,19 @@
                     }
                 }
             });
+
+
             reset_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    totalInMilliSecs = 0;
+
                     hours.setText("00");
-                    mins.setText("00");
+                    mins.setText("15");
                     secs.setText("00");
+                    int h = Integer.parseInt(hours.getText().toString());
+                    int m = Integer.parseInt(mins.getText().toString());
+                    int s = Integer.parseInt(secs.getText().toString());
+                    totalInMilliSecs = calculateTimeLeft(h,m,s);
                     started = false;
                     start_pause.setText("Start");
                     if (countDownTimer != null) {
@@ -84,7 +90,9 @@
         });
         }
 
-
+    private int calculateTimeLeft(int h, int m, int s){
+            return (h * 3600000) + (m * 60000) + (s * 1000);
+    }
     private void enableEditTexts(EditText hours, EditText mins, EditText secs, boolean bol){
         hours.setEnabled(bol);
         mins.setEnabled(bol);
