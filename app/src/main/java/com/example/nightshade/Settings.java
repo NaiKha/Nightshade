@@ -1,6 +1,7 @@
 package com.example.nightshade;
 
 import android.os.Bundle;
+import android.widget.Switch;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,4 +22,7 @@ public class Settings extends AppCompatActivity {
             return insets;
         });
     }
+
+
+
 }
