@@ -5,6 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#3F3F3F"
+    android:backgroundTint="#6C4C37"
     tools:context=".Settings">
 
 </androidx.constraintlayout.widget.ConstraintLayout>
