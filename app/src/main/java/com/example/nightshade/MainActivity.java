@@ -33,6 +33,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button movement = (Button)findViewById(R.id.movement);
+        movement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, Movement.class));
+            }
+        });
+
         ImageView settings = (ImageView)findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -16,6 +16,9 @@
             android:name=".Settings"
             android:exported="false" />
         <activity
+            android:name=".Movement"
+            android:exported="false" />
+        <activity
             android:name=".Timer"
             android:exported="false" />
         <activity
