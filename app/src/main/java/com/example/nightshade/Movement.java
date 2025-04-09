@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.ComponentActivity;
@@ -17,6 +18,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class Movement extends ComponentActivity implements SensorEventListener {
@@ -29,10 +32,10 @@ public class Movement extends ComponentActivity implements SensorEventListener {
 
     private float ax, ay, az;
     private long lastShakeTime = 0;
-    private String[] answers = {"Take a deep breath and exhale into the microphone.",
-            "Wave your phone in the air like you just don't care!", "Up down turn around.",
-            "Take a walk!",
-            };
+
+    private List<ActivityIdea> activityIdeas;
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -42,6 +45,13 @@ public class Movement extends ComponentActivity implements SensorEventListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        activityIdeas = Arrays.asList(
+                new ActivityIdea("Take a deep breath and exhale into the microphone.", R.drawable.tekopp),
+                new ActivityIdea("Wave your phone in the air like you just don't care!", R.drawable.gear_icon),
+                new ActivityIdea("Up down turn around.", R.drawable.nalle),
+                new ActivityIdea("Take a walk!", R.drawable.regn)
+        );
 
         Button freeTime = (Button)findViewById(R.id.button3);
 
@@ -113,11 +123,14 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     }
 
     private void randomAnswer() {
-        Random r = new Random();
-        int index = r.nextInt(answers.length); // random nbr between 0 (incl.) and length of array (excl.)
-        String rAnswer = answers[index];
-        TextView showAnswer = (TextView) findViewById(R.id.textView3);
-        showAnswer.setText(rAnswer);
+        Random random = new Random();
+        ActivityIdea selectedIdea = activityIdeas.get(random.nextInt(activityIdeas.size()));
+
+        TextView textView = findViewById(R.id.textView3);
+        ImageView imageView = findViewById(R.id.imageView);
+
+        textView.setText(selectedIdea.getDescription());
+        imageView.setImageResource(selectedIdea.getImageResId());
     }
 
     private void vibrate() {
@@ -131,5 +144,23 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    private static class ActivityIdea {
+        private String description;
+        private int imageResId;
+
+        public ActivityIdea(String description, int imageResId) {
+            this.description = description;
+            this.imageResId = imageResId;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public int getImageResId() {
+            return imageResId;
+        }
     }
 }
