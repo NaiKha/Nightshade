@@ -7,10 +7,14 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.media.MediaRecorder;
+import android.Manifest;
+import android.content.pm.PackageManager;
 
 import androidx.activity.ComponentActivity;
 import androidx.activity.EdgeToEdge;
@@ -34,6 +38,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     private long lastShakeTime = 0;
 
     private List<ActivityIdea> activityIdeas;
+    private MediaRecorder mediaRecorder;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +52,16 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         });
 
         activityIdeas = Arrays.asList(
-                new ActivityIdea("Take a deep breath and exhale into the microphone.", R.drawable.tekopp),
-                new ActivityIdea("Wave your phone in the air like you just don't care!", R.drawable.gear_icon),
-                new ActivityIdea("Up down turn around.", R.drawable.nalle),
-                new ActivityIdea("Take a walk!", R.drawable.regn)
+                new ActivityIdea("Take a deep breath and exhale into the microphone.", R.drawable.tekopp, "mic"),
+                new ActivityIdea("Wave your phone in the air like you just don't care!", R.drawable.gear_icon, "motion"),
+                new ActivityIdea("Up down turn around.", R.drawable.nalle, "motion"),
+                new ActivityIdea("Take a walk!", R.drawable.regn, "motion")
         );
+
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+        }
+
 
         Button freeTime = (Button)findViewById(R.id.button3);
 
@@ -109,6 +119,93 @@ public class Movement extends ComponentActivity implements SensorEventListener {
 
         }
     }
+    private void vibrate() {
+        // Get instance of Vibrator from current Context
+        Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+        // Vibrate for 400 milliseconds
+        v.vibrate(400);
+    }
+
+    private void randomAnswer() {
+        Random random = new Random();
+        ActivityIdea selectedIdea = activityIdeas.get(random.nextInt(activityIdeas.size()));
+
+        TextView textView = findViewById(R.id.textView3);
+        ImageView imageView = findViewById(R.id.imageView);
+
+        textView.setText(selectedIdea.getDescription());
+        imageView.setImageResource(selectedIdea.getImageResId());
+
+        if (selectedIdea.getType().equals("mic")) {
+            startMicListening();
+        } else {
+            stopMicListening();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1 && grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+            // Permission denied
+        }
+    }
+
+
+    private void startMicListening(){
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        try{
+            //if any previous recorder is already running, stop it
+            if(mediaRecorder != null){
+                mediaRecorder.release();
+            }
+            //set up new recorder
+            mediaRecorder = new MediaRecorder();
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            mediaRecorder.setOutputFile("/dev/null"); //don't save audio
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+
+            //monitor volume
+            new Thread(() -> {
+                while(mediaRecorder != null){
+                    try {
+                        Thread.sleep(200); //checks every 200ms
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                    int volume = mediaRecorder.getMaxAmplitude();
+                    Log.d("MicDebug", "Mic volume: " + volume);
+                    if(volume > 200){
+                        runOnUiThread(() -> {
+                            TextView micResult = findViewById(R.id.textView3);
+                            micResult.setText("Nice exhale!");
+                        });
+                        stopMicListening();
+                    }
+                }
+            }).start();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void stopMicListening(){
+        if (mediaRecorder != null){
+            try {
+                mediaRecorder.stop();
+            } catch (Exception ignored) {
+            }
+            mediaRecorder.release();
+            mediaRecorder = null;
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -122,25 +219,6 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         sensorManager.unregisterListener(this);
     }
 
-    private void randomAnswer() {
-        Random random = new Random();
-        ActivityIdea selectedIdea = activityIdeas.get(random.nextInt(activityIdeas.size()));
-
-        TextView textView = findViewById(R.id.textView3);
-        ImageView imageView = findViewById(R.id.imageView);
-
-        textView.setText(selectedIdea.getDescription());
-        imageView.setImageResource(selectedIdea.getImageResId());
-    }
-
-    private void vibrate() {
-        // Get instance of Vibrator from current Context
-        Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-
-        // Vibrate for 400 milliseconds
-        v.vibrate(400);
-    }
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
@@ -149,18 +227,24 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     private static class ActivityIdea {
         private String description;
         private int imageResId;
+        private String type;
 
-        public ActivityIdea(String description, int imageResId) {
+        public ActivityIdea(String description, int imageResId, String type) {
             this.description = description;
             this.imageResId = imageResId;
+            this.type = type;
         }
 
-        public String getDescription() {
+        public String getDescription(){
             return description;
         }
 
-        public int getImageResId() {
+        public int getImageResId(){
             return imageResId;
+        }
+
+        public String getType(){
+            return type;
         }
     }
 }
