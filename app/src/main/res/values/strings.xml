@@ -2,5 +2,5 @@
     <string name="app_name">Nightshade</string>
     <string name="Activity">New Activity</string>
     <string name="start">Start</string>
-    <string name="activity_instructions">Activity instructions</string>
+    <string name="activity_instructions">Shake your phone for a new exercise!</string>
 </resources>

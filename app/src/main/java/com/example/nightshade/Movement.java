@@ -22,6 +22,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -39,6 +40,8 @@ public class Movement extends ComponentActivity implements SensorEventListener {
 
     private List<ActivityIdea> activityIdeas;
     private MediaRecorder mediaRecorder;
+    private File tempAudioFile;
+
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,8 +140,14 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         textView.setText(selectedIdea.getDescription());
         imageView.setImageResource(selectedIdea.getImageResId());
 
+        Log.d("MicDebug", "Selected idea type: " + selectedIdea.getType());
+
         if (selectedIdea.getType().equals("mic")) {
-            startMicListening();
+            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                startMicListening();
+            } else {
+                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+            }
         } else {
             stopMicListening();
         }
@@ -147,11 +156,15 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1 && grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-            // Permission denied
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("MicDebug", "Permission granted, starting mic");
+                startMicListening();
+            } else {
+                Log.d("MicDebug", "Mic permission denied");
+            }
         }
     }
-
 
     private void startMicListening(){
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -162,18 +175,23 @@ public class Movement extends ComponentActivity implements SensorEventListener {
             //if any previous recorder is already running, stop it
             if(mediaRecorder != null){
                 mediaRecorder.release();
+                mediaRecorder = null;
             }
+            tempAudioFile = File.createTempFile("temp_audio", ".3gp", getCacheDir());
+            Log.d("MicDebug", "Temp output file: " + tempAudioFile.getAbsolutePath());
             //set up new recorder
             mediaRecorder = new MediaRecorder();
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mediaRecorder.setOutputFile("/dev/null"); //don't save audio
+            mediaRecorder.setOutputFile(tempAudioFile.getAbsolutePath());
             mediaRecorder.prepare();
             mediaRecorder.start();
+            Log.d("MicDebug", "MediaRecorder started");
 
             //monitor volume
             new Thread(() -> {
+                Log.d("MicDebug", "Mic listening thread started");
                 while(mediaRecorder != null){
                     try {
                         Thread.sleep(200); //checks every 200ms
@@ -182,7 +200,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
                     }
                     int volume = mediaRecorder.getMaxAmplitude();
                     Log.d("MicDebug", "Mic volume: " + volume);
-                    if(volume > 200){
+                    if(volume > 1500){
                         runOnUiThread(() -> {
                             TextView micResult = findViewById(R.id.textView3);
                             micResult.setText("Nice exhale!");
@@ -204,6 +222,11 @@ public class Movement extends ComponentActivity implements SensorEventListener {
             }
             mediaRecorder.release();
             mediaRecorder = null;
+        }
+        if (tempAudioFile != null && tempAudioFile.exists()) {
+            boolean deleted = tempAudioFile.delete();
+            Log.d("MicDebug", "Temp file deleted: " + deleted);
+            tempAudioFile = null;
         }
     }
 
