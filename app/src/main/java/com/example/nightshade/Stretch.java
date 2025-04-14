@@ -25,9 +25,13 @@ public class Stretch extends AppCompatActivity implements SensorEventListener {
     private boolean isReady = false;
     private long lastUpdateTime = 0;
 
-    private static final float MOVEMENT_THRESHOLD = 5f;
+    private static final float MOVEMENT_THRESHOLD = 1.5f;
     private static final long MIN_TIME_BETWEEN_SWITCH = 1500;
     private static final long START_DELAY_MS = 1000;
+    private static final int SAMPLE_SIZE = 10;
+    private float[] zSamples = new float[SAMPLE_SIZE];
+    private int sampleIndex = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +39,9 @@ public class Stretch extends AppCompatActivity implements SensorEventListener {
         setContentView(R.layout.activity_stretch);
 
         stretchImage = findViewById(R.id.stretchImage);
-        readyText = findViewById(R.id.readyText);
-
         stretchImage.setImageResource(R.drawable.stretch1);
+
+        readyText = findViewById(R.id.readyText);
         readyText.setVisibility(View.VISIBLE);
 
         new Handler().postDelayed(() -> {
@@ -66,23 +70,32 @@ public class Stretch extends AppCompatActivity implements SensorEventListener {
         if (!isReady || event.sensor.getType() != Sensor.TYPE_ACCELEROMETER) return;
 
         float z = event.values[2];
-        long currentTime = System.currentTimeMillis();
+        zSamples[sampleIndex % SAMPLE_SIZE] = z;
+        sampleIndex++;
 
+        if (sampleIndex < SAMPLE_SIZE) return;
+
+        float averageZ = 0;
+        for (float zVal : zSamples) {
+            averageZ += zVal;
+        }
+        averageZ /= SAMPLE_SIZE;
+
+        long currentTime = System.currentTimeMillis();
         if (currentTime - lastUpdateTime < MIN_TIME_BETWEEN_SWITCH) return;
 
-        if (!armsUp && z < -MOVEMENT_THRESHOLD) {
+        if (!armsUp && averageZ < -MOVEMENT_THRESHOLD) {
             stretchImage.setImageResource(R.drawable.stretch2); // arms up
             armsUp = true;
             giveFeedback();
             lastUpdateTime = currentTime;
-        } else if (armsUp && z > MOVEMENT_THRESHOLD) {
+        } else if (armsUp && averageZ > MOVEMENT_THRESHOLD) {
             stretchImage.setImageResource(R.drawable.stretch1); // arms down
             armsUp = false;
             giveFeedback();
             lastUpdateTime = currentTime;
         }
     }
-
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
