@@ -39,6 +39,15 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     private float ax, ay, az;
     private long lastShakeTime = 0;
 
+    private Sensor lightSensor;
+    private boolean isCovered = false;
+    private long coverStartTime = 0;
+    private static final int COVER_THRESHOLD = 10;
+    private static final int COVER_DURATION_MS = 3000;
+
+    private TextView luxValueText;
+
+
 
 
     private String[] activities = {"Microphone", "Step Counter"};
@@ -53,9 +62,6 @@ public class Movement extends ComponentActivity implements SensorEventListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-
-
 
 
 
@@ -78,6 +84,14 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         mAccel = 9f; // 10 approx. earth's gravity, was too high
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
         mAccelLast = SensorManager.GRAVITY_EARTH;
+
+        luxValueText = findViewById(R.id.luxValueText);
+
+
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        if (lightSensor != null) {
+            sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     @Override
@@ -88,6 +102,27 @@ public class Movement extends ComponentActivity implements SensorEventListener {
             ay = event.values[1];
             az = event.values[2];
         }
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+            float lux = event.values[0];
+
+            luxValueText.setText("Lux: " + lux);
+
+            if (lux < COVER_THRESHOLD) {
+                if (!isCovered) {
+                    isCovered = true;
+                    coverStartTime = System.currentTimeMillis();
+                } else {
+                    long now = System.currentTimeMillis();
+                    if (now - coverStartTime >= COVER_DURATION_MS) {
+                        goBackToTimer();
+                    }
+                }
+            } else {
+                isCovered = false;
+                coverStartTime = 0;
+            }
+        }
+
 
         // save previous acceleration
         mAccelLast = mAccelCurrent;
@@ -139,6 +174,12 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         }
 
     }
+    private void goBackToTimer() {
+        Intent intent = new Intent(Movement.this, Timer.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
+    }
 
 
 
@@ -151,14 +192,21 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        if (lightSensor != null) {
+            sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
+
 
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
-
+        sensorManager.unregisterListener(this, accelerometer);
+        if (lightSensor != null) {
+            sensorManager.unregisterListener(this, lightSensor);
+        }
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
