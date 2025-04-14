@@ -68,13 +68,13 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
     }
 
     private void startMotionActivity() {
+        handler.post(imageSwitchRunnable); // Start the image switching
         if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
             stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
             sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_UI);
             countingSteps = true;
             stepsAtReset = -1;
             textView.setText("Start walking...");
-            handler.post(imageSwitchRunnable); // Start the image switching
         } else {
             textView.setText("Step Counter is not supported on this device.");
         }
