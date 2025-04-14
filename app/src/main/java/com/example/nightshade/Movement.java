@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
@@ -176,6 +177,9 @@ public class Movement extends ComponentActivity implements SensorEventListener {
 
     }
     private void goBackToTimer() {
+        MediaPlayer mediaPlayer = MediaPlayer.create(Movement.this, R.raw.timer);
+        mediaPlayer.start();
+
         Intent intent = new Intent(Movement.this, Timer.class);
         intent.putExtra("start_timer", true);  // Pass data to indicate that the timer should be started
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
