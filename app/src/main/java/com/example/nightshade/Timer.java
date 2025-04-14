@@ -92,8 +92,8 @@
                 public void onClick(View v) {
 
                     hours.setText("00");
-                    mins.setText("15");
-                    secs.setText("00");
+                    mins.setText("00");
+                    secs.setText("10");
                     int h = Integer.parseInt(hours.getText().toString());
                     int m = Integer.parseInt(mins.getText().toString());
                     int s = Integer.parseInt(secs.getText().toString());

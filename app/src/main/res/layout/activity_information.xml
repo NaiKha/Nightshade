@@ -8,52 +8,79 @@
     android:background="#FFF5EE"
     tools:context=".Information">
 
-    <TextView
-        android:id="@+id/about_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:text="Slothful is an app that helps you stay productive as well as taking well deserved mindness breaks!Set the specified working time in settings, and after the timer is started, the app will tell you when its time to move!"
-        android:textColor="#6E4E37"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:lineSpacingExtra="6dp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+    <!-- ScrollView to make content scrollable -->
+    <android.widget.ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- LinearLayout to arrange items vertically inside the ScrollView -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
+
+            <!-- TextView for the first block of text -->
+            <TextView
+                android:id="@+id/about_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Slothful is an app that helps you stay productive as well as taking well deserved mindfulness breaks! Set the specified working time in settings, and after the timer is started, the app will tell you when it's time to move!"
+                android:textColor="#6E4E37"
+                android:textSize="20sp"
+                android:lineSpacingExtra="6dp"
+                android:paddingBottom="16dp" />
+
+            <TextView
+                android:id="@+id/instruction_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="To switch activity during a break, simply shake the phone!"
+                android:textColor="#6E4E37"
+                android:textSize="20sp"
+                android:lineSpacingExtra="6dp"
+                android:paddingBottom="16dp" />
 
 
-        />
-    <TextView
-        android:id="@+id/instructions_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="500dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:text="To switch activity during a break, simply shake the phone! If you want to go back to working, just lay down your phone and the timer will restart for you!"
-        android:textColor="#6E4E37"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:lineSpacingExtra="6dp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-    <Button
-        android:id="@+id/back_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go Back"
-        android:backgroundTint="#6E4E37"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="32dp"
-        app:layout_constraintTop_toBottomOf="@+id/instructions_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/shake"
+            android:contentDescription="Image description"
+            android:layout_marginBottom="16dp"/>
 
+
+            <TextView
+                android:id="@+id/instruction_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=" If you want to go back to working, just lay down your phone and the timer will restart for you!"
+                android:textColor="#6E4E37"
+                android:textSize="20sp"
+                android:lineSpacingExtra="6dp"
+                android:paddingBottom="16dp" />
+
+            <!-- ImageView for the second image -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/put_down"
+            android:contentDescription="Image description"
+            android:layout_marginBottom="16dp"/>
+
+            <!-- Button at the bottom -->
+            <Button
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Go Back"
+                android:backgroundTint="#6E4E37"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="32dp"
+                android:layout_gravity="center" />
+
+        </LinearLayout>
+
+    </android.widget.ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
