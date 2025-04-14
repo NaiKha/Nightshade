@@ -19,38 +19,41 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/about"
+        android:id="@+id/movement"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="29dp"
+        android:layout_marginTop="32dp"
         android:backgroundTint="#6F4E37"
-        android:text="About"
+        android:text="Movement"
         android:textColor="#FFF5EE"
-        app:layout_constraintBaseline_toBaselineOf="@+id/movement"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="57dp"
+        android:layout_marginTop="32dp"
         android:backgroundTint="#6F4E37"
         android:text="Timer"
         android:textColor="#FFF5EE"
-        app:layout_constraintBaseline_toBaselineOf="@+id/movement"
+        app:layout_constraintTop_toBottomOf="@id/movement"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/movement"
+        android:id="@+id/about"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="237dp"
+        android:layout_marginTop="32dp"
         android:backgroundTint="#6F4E37"
-        android:text="Movement"
+        android:text="About"
         android:textColor="#FFF5EE"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/timer" />
+        app:layout_constraintTop_toBottomOf="@id/timer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
     <TextView
         android:id="@+id/textView2"
@@ -60,7 +63,7 @@
         android:layout_marginBottom="50dp"
         android:fontFamily="@font/oswald_extralight"
         android:gravity="center"
-        android:text="A desciptive sentence of the application here"
+        android:text=""
         android:textColor="#6F4E37"
         android:textSize="25sp"
         android:textStyle="bold"
