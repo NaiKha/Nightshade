@@ -81,6 +81,26 @@
             android:contentDescription="Image description"
             android:layout_marginBottom="16dp"/>
 
+            <!-- ha någon sorts åtskiljare mellan instruktioner och oss -->
+
+            <TextView
+                android:id="@+id/instruction_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="The Nightshade Team consists of Naima Khan, Rana Mawaldi, Wilma Wiberg and Märta Fiddeli Fahlborg."
+                android:textColor="#6E4E37"
+                android:textSize="20sp"
+                android:lineSpacingExtra="6dp"
+                android:paddingBottom="16dp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/nightshade"
+                android:contentDescription="Nightshade image"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"/>
+
             <!-- Button at the bottom -->
             <Button
                 android:id="@+id/back_button"
