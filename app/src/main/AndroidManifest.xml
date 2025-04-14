@@ -16,6 +16,15 @@
         android:theme="@style/Theme.Nightshade"
         tools:targetApi="31">
         <activity
+            android:name=".StepCounter"
+            android:exported="false" />
+        <activity
+            android:name=".Microphone"
+            android:exported="false" />
+        <activity
+            android:name=".microphone"
+            android:exported="false" />
+        <activity
             android:name=".Settings"
             android:exported="false" />
         <activity

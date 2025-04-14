@@ -35,13 +35,13 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     private float mAccelCurrent;
     private float mAccelLast;
 
+
     private float ax, ay, az;
     private long lastShakeTime = 0;
 
-    private List<ActivityIdea> activityIdeas;
-    private MediaRecorder mediaRecorder;
-    private File tempAudioFile;
 
+
+    private String[] activities = {"Microphone", "Step Counter"};
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +54,9 @@ public class Movement extends ComponentActivity implements SensorEventListener {
             return insets;
         });
 
-        activityIdeas = Arrays.asList(
-                new ActivityIdea("Take a deep breath and exhale into the microphone.", R.drawable.tekopp, "mic"),
-                new ActivityIdea("Wave your phone in the air like you just don't care!", R.drawable.gear_icon, "motion"),
-                new ActivityIdea("Up down turn around.", R.drawable.nalle, "motion"),
-                new ActivityIdea("Take a walk!", R.drawable.regn, "motion")
-        );
 
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
-        }
+
+
 
 
         Button freeTime = (Button)findViewById(R.id.button3);
@@ -121,7 +114,9 @@ public class Movement extends ComponentActivity implements SensorEventListener {
             }
 
         }
+
     }
+
     private void vibrate() {
         // Get instance of Vibrator from current Context
         Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
@@ -132,103 +127,25 @@ public class Movement extends ComponentActivity implements SensorEventListener {
 
     private void randomAnswer() {
         Random random = new Random();
-        ActivityIdea selectedIdea = activityIdeas.get(random.nextInt(activityIdeas.size()));
+        int index = random.nextInt(activities.length);
+        String rActivity = activities[index];
 
-        TextView textView = findViewById(R.id.textView3);
-        ImageView imageView = findViewById(R.id.imageView);
+        if (rActivity.equals("Microphone")) {
+            startActivity(new Intent(Movement.this, Microphone.class));
 
-        textView.setText(selectedIdea.getDescription());
-        imageView.setImageResource(selectedIdea.getImageResId());
+        } else if (rActivity.equals("Step Counter")){
+            startActivity(new Intent(Movement.this, StepCounter.class));
 
-        Log.d("MicDebug", "Selected idea type: " + selectedIdea.getType());
-
-        if (selectedIdea.getType().equals("mic")) {
-            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-                startMicListening();
-            } else {
-                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
-            }
-        } else {
-            stopMicListening();
         }
+
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("MicDebug", "Permission granted, starting mic");
-                startMicListening();
-            } else {
-                Log.d("MicDebug", "Mic permission denied");
-            }
-        }
-    }
 
-    private void startMicListening(){
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
 
-        try{
-            //if any previous recorder is already running, stop it
-            if(mediaRecorder != null){
-                mediaRecorder.release();
-                mediaRecorder = null;
-            }
-            tempAudioFile = File.createTempFile("temp_audio", ".3gp", getCacheDir());
-            Log.d("MicDebug", "Temp output file: " + tempAudioFile.getAbsolutePath());
-            //set up new recorder
-            mediaRecorder = new MediaRecorder();
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mediaRecorder.setOutputFile(tempAudioFile.getAbsolutePath());
-            mediaRecorder.prepare();
-            mediaRecorder.start();
-            Log.d("MicDebug", "MediaRecorder started");
 
-            //monitor volume
-            new Thread(() -> {
-                Log.d("MicDebug", "Mic listening thread started");
-                while(mediaRecorder != null){
-                    try {
-                        Thread.sleep(200); //checks every 200ms
-                    } catch (InterruptedException e){
-                        e.printStackTrace();
-                    }
-                    int volume = mediaRecorder.getMaxAmplitude();
-                    Log.d("MicDebug", "Mic volume: " + volume);
-                    if(volume > 1500){
-                        runOnUiThread(() -> {
-                            TextView micResult = findViewById(R.id.textView3);
-                            micResult.setText("Nice exhale!");
-                        });
-                        stopMicListening();
-                    }
-                }
-            }).start();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
-    private void stopMicListening(){
-        if (mediaRecorder != null){
-            try {
-                mediaRecorder.stop();
-            } catch (Exception ignored) {
-            }
-            mediaRecorder.release();
-            mediaRecorder = null;
-        }
-        if (tempAudioFile != null && tempAudioFile.exists()) {
-            boolean deleted = tempAudioFile.delete();
-            Log.d("MicDebug", "Temp file deleted: " + deleted);
-            tempAudioFile = null;
-        }
-    }
+
+
 
     @Override
     protected void onResume() {
@@ -240,6 +157,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+
     }
 
     @Override
@@ -247,27 +165,5 @@ public class Movement extends ComponentActivity implements SensorEventListener {
 
     }
 
-    private static class ActivityIdea {
-        private String description;
-        private int imageResId;
-        private String type;
 
-        public ActivityIdea(String description, int imageResId, String type) {
-            this.description = description;
-            this.imageResId = imageResId;
-            this.type = type;
-        }
-
-        public String getDescription(){
-            return description;
-        }
-
-        public int getImageResId(){
-            return imageResId;
-        }
-
-        public String getType(){
-            return type;
-        }
-    }
 }
