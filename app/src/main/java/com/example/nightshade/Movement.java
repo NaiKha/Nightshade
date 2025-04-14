@@ -50,7 +50,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
 
 
 
-    private String[] activities = {"Microphone", "Step Counter"};
+    private String[] activities = {"Microphone", "Step Counter", "Stretch"};
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,12 +165,18 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         int index = random.nextInt(activities.length);
         String rActivity = activities[index];
 
-        if (rActivity.equals("Microphone")) {
-            startActivity(new Intent(Movement.this, Microphone.class));
+        switch (rActivity) {
+            case "Microphone":
+                startActivity(new Intent(Movement.this, Microphone.class));
+                break;
 
-        } else if (rActivity.equals("Step Counter")){
-            startActivity(new Intent(Movement.this, StepCounter.class));
+            case "Step Counter":
+                startActivity(new Intent(Movement.this, StepCounter.class));
+                break;
 
+            case "Stretch":
+                startActivity(new Intent(Movement.this, Stretch.class));
+                break;
         }
 
     }
