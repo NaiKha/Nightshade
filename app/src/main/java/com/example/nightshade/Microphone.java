@@ -2,8 +2,14 @@ package com.example.nightshade;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -15,11 +21,24 @@ import androidx.core.view.WindowInsetsCompat;
 import android.media.MediaRecorder;
 
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
-public class Microphone extends AppCompatActivity {
+public class Microphone extends AppCompatActivity implements SensorEventListener {
 
     private MediaRecorder mediaRecorder;
     private File tempAudioFile;
+    CountDownTimer countDown = null;
+    TextView secs;
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private float mAccel;
+    private float mAccelCurrent;
+    private float mAccelLast;
+    private float ax, ay, az;
+    private long lastShakeTime = 0;
+    private long startupTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,15 +49,26 @@ public class Microphone extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
-        }
+        startupTime = System.currentTimeMillis();
 
-        if (checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+        // check permission for microphone usage
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
             startMicListening();
         } else {
             requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
         }
+        secs = (TextView)findViewById((R.id.textView20));
+        //secs.setText("5");
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(this,
+                accelerometer,
+                SensorManager.SENSOR_DELAY_NORMAL);
+
+        // set up baseline
+        mAccel = 9f; // 10 approx. earth's gravity, was too high
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -51,6 +81,14 @@ public class Microphone extends AppCompatActivity {
                 Log.d("MicDebug", "Mic permission denied");
             }
         }
+    }
+
+    private void vibrate() {
+        // Get instance of Vibrator from current Context
+        Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+        // Vibrate for 400 milliseconds
+        v.vibrate(400);
     }
     private void startMicListening(){
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -86,9 +124,9 @@ public class Microphone extends AppCompatActivity {
                     }
                     int volume = mediaRecorder.getMaxAmplitude();
                     Log.d("MicDebug", "Mic volume: " + volume);
-                    if(volume > 1500){
+                    if(volume > 25000){
                         runOnUiThread(() -> {
-                            TextView micResult = findViewById(R.id.textView5);
+                            TextView micResult = findViewById(R.id.textView20);
                             micResult.setText("Nice exhale!");
                         });
                         stopMicListening();
@@ -113,5 +151,64 @@ public class Microphone extends AppCompatActivity {
             Log.d("MicDebug", "Temp file deleted: " + deleted);
             tempAudioFile = null;
         }
+    }
+
+    public void startTimer(TextView secs) {
+        countDown = new CountDownTimer(6000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                NumberFormat f = new DecimalFormat("0");
+                long sec = (millisUntilFinished / 1000) % 60;
+                secs.setText(f.format(sec));
+            }
+            public void onFinish() {
+                secs.setText("0");
+                vibrate();
+            }
+        }.start();
+    }
+
+    public void cancelTimer(TextView secs) {
+        if(countDown!=null)
+            countDown.cancel();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopMicListening();
+        cancelTimer((TextView) findViewById(R.id.textView20));
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        // fetch x, y, z values, first checking if the sensor triggered is the accelerometer
+        if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+            ax = event.values[0];
+            ay = event.values[1];
+            az = event.values[2];
+        }
+
+        // save previous acceleration
+        mAccelLast = mAccelCurrent;
+        // use total acceleration magnitude formula
+        mAccelCurrent = (float) Math.sqrt((double) ax * ax + ay * ay + az * az);
+        // difference between last and new acceleration
+        float delta = mAccelCurrent - mAccelLast;
+        // multiply by 0.9f for a more stable shake detection
+        mAccel = mAccel * 0.9f + delta;
+        //mAccel = delta;
+
+        long time = System.currentTimeMillis();
+        if (time - startupTime < 2000) return;
+
+        if (mAccel > 10f && time - lastShakeTime > 2000) {
+            lastShakeTime = time;
+            vibrate();
+            startTimer(secs);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 }
