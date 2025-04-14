@@ -20,7 +20,14 @@
             android:layout_height="wrap_content"
             android:padding="24dp">
 
-            <!-- TextView for the first block of text -->
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/nalle"
+                android:contentDescription="Image description"
+                android:layout_marginBottom="16dp"/>
+
             <TextView
                 android:id="@+id/about_text"
                 android:layout_width="match_parent"
@@ -30,6 +37,12 @@
                 android:textSize="20sp"
                 android:lineSpacingExtra="6dp"
                 android:paddingBottom="16dp" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:src="@drawable/krusidull"
+                android:contentDescription="Image description"
+                android:layout_marginBottom="16dp"/>
 
             <TextView
                 android:id="@+id/instruction_1"
@@ -54,7 +67,7 @@
                 android:id="@+id/instruction_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=" If you want to go back to working, just lay down your phone and the timer will restart for you!"
+                android:text="If you want to go back to working, just lay down your phone on a flat surface and the timer will restart for you!"
                 android:textColor="#6E4E37"
                 android:textSize="20sp"
                 android:lineSpacingExtra="6dp"
