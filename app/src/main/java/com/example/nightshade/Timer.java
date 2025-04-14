@@ -5,6 +5,8 @@
     import android.view.View;
     import android.widget.Button;
     import android.widget.EditText;
+    import android.os.VibrationEffect;
+    import android.os.Vibrator;
 
     import androidx.activity.EdgeToEdge;
     import androidx.appcompat.app.AppCompatActivity;
@@ -130,7 +132,13 @@
                     started =false;
                     start_pause.setText("Start");
                     totalInMilliSecs = 0;
+
+                    Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                    if (v != null) {
+                        v.vibrate(1000);
+                    }
                 }
+
             }.start();
         }
     }
