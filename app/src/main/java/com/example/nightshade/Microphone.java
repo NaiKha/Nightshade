@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -52,11 +53,10 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
         startupTime = System.currentTimeMillis();
 
         // check permission for microphone usage
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            startMicListening();
-        } else {
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
         }
+
         secs = (TextView)findViewById((R.id.textView20));
         //secs.setText("5");
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -126,7 +126,7 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
                     Log.d("MicDebug", "Mic volume: " + volume);
                     if(volume > 25000){
                         runOnUiThread(() -> {
-                            TextView micResult = findViewById(R.id.textView20);
+                            TextView micResult = findViewById(R.id.textView5);
                             micResult.setText("Nice exhale!");
                         });
                         stopMicListening();
@@ -154,7 +154,7 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
     }
 
     public void startTimer(TextView secs) {
-        countDown = new CountDownTimer(6000, 1000) {
+        countDown = new CountDownTimer(5000, 1000) {
             public void onTick(long millisUntilFinished) {
                 NumberFormat f = new DecimalFormat("0");
                 long sec = (millisUntilFinished / 1000) % 60;
@@ -163,6 +163,9 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
             public void onFinish() {
                 secs.setText("0");
                 vibrate();
+                startMicListening();
+                ImageView exhale = (ImageView) findViewById((R.id.imageView3));
+                exhale.setImageResource(R.drawable.breath);
             }
         }.start();
     }
