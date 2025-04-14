@@ -140,6 +140,8 @@
                     if (v != null) {
                         v.vibrate(1000);
                     }
+                    MediaPlayer mediaPlayer = MediaPlayer.create(Timer.this, R.raw.timer);
+                    mediaPlayer.start();
 
                 }
 
