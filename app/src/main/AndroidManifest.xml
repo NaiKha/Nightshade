@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Nightshade"
         tools:targetApi="31">
         <activity
+            android:name=".Balance"
+            android:exported="false" />
+        <activity
             android:name=".Information"
             android:exported="false" />
         <activity

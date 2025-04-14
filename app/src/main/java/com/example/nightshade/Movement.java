@@ -51,7 +51,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
 
 
 
-    private String[] activities = {"Microphone", "Step Counter", "Stretch"};
+    private String[] activities = {"Microphone", "Step Counter", "Stretch", "Balance"};
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +63,6 @@ public class Movement extends ComponentActivity implements SensorEventListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-
-
-
 
 
 
@@ -172,6 +168,10 @@ public class Movement extends ComponentActivity implements SensorEventListener {
 
             case "Stretch":
                 startActivity(new Intent(Movement.this, Stretch.class));
+                break;
+
+            case "Balance":
+                startActivity(new Intent(Movement.this, Balance.class));
                 break;
         }
 
