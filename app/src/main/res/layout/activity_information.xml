@@ -5,17 +5,44 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFF5EE"
     tools:context=".Information">
 
     <TextView
         android:id="@+id/about_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Information"
-        android:textSize="18sp"
-        android:textColor="#6F4E37"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="Slothful is an app that helps you stay productive as well as taking well deserved mindness breaks!Set the specified working time in settings, and after the timer is started, the app will tell you when its time to move!"
+        android:textColor="#6E4E37"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:lineSpacingExtra="6dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+
+
+        />
+    <TextView
+        android:id="@+id/instructions_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="500dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="To switch activity during a break, simply shake the phone! If you want to go back to working, just lay down your phone and the timer will restart for you!"
+        android:textColor="#6E4E37"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:lineSpacingExtra="6dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
