@@ -126,7 +126,7 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
                     Log.d("MicDebug", "Mic volume: " + volume);
                     if(volume > 25000){
                         runOnUiThread(() -> {
-                            TextView micResult = findViewById(R.id.textView5);
+                            TextView micResult = findViewById(R.id.textView13);
                             micResult.setText("Nice exhale!");
                         });
                         stopMicListening();
