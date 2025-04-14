@@ -20,8 +20,8 @@
 
     <Button
         android:id="@+id/movement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
         android:layout_marginTop="32dp"
         android:backgroundTint="#6F4E37"
         android:text="Movement"
@@ -32,8 +32,8 @@
 
     <Button
         android:id="@+id/timer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
         android:layout_marginTop="32dp"
         android:backgroundTint="#6F4E37"
         android:text="Timer"
@@ -44,8 +44,8 @@
 
     <Button
         android:id="@+id/about"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
         android:layout_marginTop="32dp"
         android:backgroundTint="#6F4E37"
         android:text="About"

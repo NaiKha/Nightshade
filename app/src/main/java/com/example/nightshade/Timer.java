@@ -43,6 +43,17 @@
             EditText mins = (EditText)findViewById((R.id.card2));
             EditText secs = (EditText)findViewById((R.id.card3));
 
+            Button goMovementBtn = findViewById(R.id.go_movement_btn);
+            goMovementBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Timer.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+
+
 
             start_pause.setOnClickListener(new View.OnClickListener() {
                 @Override
