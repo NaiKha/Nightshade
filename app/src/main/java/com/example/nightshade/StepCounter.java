@@ -6,7 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -23,7 +24,10 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
     private boolean countingSteps = false;
     private int stepsAtReset = -1;
     private TextView textView;
-
+    private ImageView imageView;
+    private Handler handler;
+    private Runnable imageSwitchRunnable;
+    private boolean WalkingImage1 = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +39,24 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        textView = findViewById(R.id.textView6);;
+
+        textView = findViewById(R.id.textView6);
+        imageView = findViewById(R.id.imageView6);
+
+        handler = new Handler();
+        imageSwitchRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (WalkingImage1) {
+                    imageView.setImageResource(R.drawable.walk2);
+                } else {
+                    imageView.setImageResource(R.drawable.walk1);
+                }
+                WalkingImage1 = !WalkingImage1;
+                handler.postDelayed(this, 750);
+            }
+        };
+
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACTIVITY_RECOGNITION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -44,11 +65,8 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
         } else {
             startMotionActivity();
         }
-
-
-
-
     }
+
     private void startMotionActivity() {
         if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
             stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
@@ -56,10 +74,12 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
             countingSteps = true;
             stepsAtReset = -1;
             textView.setText("Start walking...");
+            handler.post(imageSwitchRunnable); // Start the image switching
         } else {
             textView.setText("Step Counter is not supported on this device.");
         }
     }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
@@ -74,12 +94,8 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
         }
     }
 
-
-
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
-    }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     @Override
     protected void onResume() {
@@ -90,8 +106,6 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
         if (stepCounter != null) {
             sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_UI);
         }
-
-
         stepsAtReset = -1;
     }
 
@@ -99,9 +113,6 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+        handler.removeCallbacks(imageSwitchRunnable); // Stop the image switching when the activity is paused
     }
-
-
-
-
 }
