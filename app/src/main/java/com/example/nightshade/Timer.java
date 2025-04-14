@@ -17,6 +17,9 @@
     import java.text.DecimalFormat;
     import java.text.NumberFormat;
 
+    import android.media.MediaPlayer;
+
+
     public class Timer extends AppCompatActivity {
         private boolean started = false;
         private CountDownTimer countDownTimer;
@@ -137,6 +140,7 @@
                     if (v != null) {
                         v.vibrate(1000);
                     }
+
                 }
 
             }.start();
