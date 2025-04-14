@@ -65,14 +65,9 @@ public class Movement extends ComponentActivity implements SensorEventListener {
 
 
 
-        Button freeTime = (Button)findViewById(R.id.button3);
 
-        freeTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Movement.this, FreeTime.class));
-            }
-        });
+
+
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
