@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+
 
     <application
         android:allowBackup="true"
@@ -21,6 +23,7 @@
         <activity
             android:name=".StepCounter"
             android:exported="false" />
+
         <activity
             android:name=".Microphone"
             android:exported="false" />
