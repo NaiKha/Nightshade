@@ -176,6 +176,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     }
     private void goBackToTimer() {
         Intent intent = new Intent(Movement.this, Timer.class);
+        intent.putExtra("start_timer", true);  // Pass data to indicate that the timer should be started
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish();

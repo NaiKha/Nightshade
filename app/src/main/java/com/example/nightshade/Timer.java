@@ -43,6 +43,7 @@
             EditText mins = (EditText)findViewById((R.id.card2));
             EditText secs = (EditText)findViewById((R.id.card3));
 
+
             start_pause.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -131,7 +132,7 @@
                 @Override
                 public void onFinish() {
                     hours.setText("00");
-                    mins.setText("00");
+                    mins.setText("15");
                     secs.setText("00");
                     started =false;
                     start_pause.setText("Start");
