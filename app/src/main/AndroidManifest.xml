@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -18,12 +17,14 @@
         android:theme="@style/Theme.Nightshade"
         tools:targetApi="31">
         <activity
+            android:name=".Information"
+            android:exported="false" />
+        <activity
             android:name=".Stretch"
             android:exported="false" />
         <activity
             android:name=".StepCounter"
             android:exported="false" />
-
         <activity
             android:name=".Microphone"
             android:exported="false" />

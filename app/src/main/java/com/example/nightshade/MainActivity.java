@@ -25,6 +25,15 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        Button about = (Button) findViewById(R.id.about);
+        about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, Information.class));
+            }
+        });
+
+
         Button timer = (Button)findViewById(R.id.timer);
         timer.setOnClickListener(new View.OnClickListener() {
             @Override
