@@ -1,5 +1,6 @@
     package com.example.nightshade;
 
+    import android.content.Intent;
     import android.os.Bundle;
     import android.os.CountDownTimer;
     import android.view.View;
@@ -142,6 +143,12 @@
                     }
                     MediaPlayer mediaPlayer = MediaPlayer.create(Timer.this, R.raw.timer);
                     mediaPlayer.start();
+
+                    mediaPlayer.setOnCompletionListener(mp -> {
+                        mp.release();
+                        Intent intent = new Intent(Timer.this, Movement.class);
+                        startActivity(intent);
+                    });
 
                 }
 
