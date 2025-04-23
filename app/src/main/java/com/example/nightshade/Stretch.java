@@ -1,6 +1,7 @@
 package com.example.nightshade;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -107,5 +108,12 @@ public class Stretch extends AppCompatActivity implements SensorEventListener {
         if (v != null) {
             v.vibrate(200);
         }
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, Movement.class);
+        startActivity(intent);
+        finish(); //removes current activity from stack
     }
 }

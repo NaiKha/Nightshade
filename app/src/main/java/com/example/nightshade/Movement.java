@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +25,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -47,8 +50,8 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     private static final int COVER_DURATION_MS = 3000;
 
     private TextView luxValueText;
-
-
+    private boolean isActivityLaunching = false;
+    private List<String> activityQueue = new ArrayList<>();
 
 
     private String[] activities = {"Microphone", "Step Counter", "Stretch", "Balance"};
@@ -152,27 +155,40 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         v.vibrate(400);
     }
 
+    private void initializeQueue() {
+        activityQueue = new ArrayList<>(Arrays.asList(activities));
+        Collections.shuffle(activityQueue);
+    }
     private void randomAnswer() {
-        Random random = new Random();
-        int index = random.nextInt(activities.length);
-        String rActivity = activities[index];
+        if (isActivityLaunching) return;
+        isActivityLaunching = true;
+
+        if (activityQueue.isEmpty()) {
+            initializeQueue(); // do when all activities are used
+        }
+        String rActivity = activityQueue.remove(0);
+        Intent intent = null;
 
         switch (rActivity) {
             case "Microphone":
-                startActivity(new Intent(Movement.this, Microphone.class));
+                intent = new Intent(this, Microphone.class);
                 break;
 
             case "Step Counter":
-                startActivity(new Intent(Movement.this, StepCounter.class));
+                intent = new Intent(this, StepCounter.class);
                 break;
 
             case "Stretch":
-                startActivity(new Intent(Movement.this, Stretch.class));
+                intent = new Intent(this, Stretch.class);
                 break;
 
             case "Balance":
-                startActivity(new Intent(Movement.this, Balance.class));
+                intent = new Intent(this, Balance.class);
                 break;
+        }
+        if (intent != null){
+            startActivity(intent);
+            new Handler().postDelayed(() -> isActivityLaunching = false, 1000);
         }
 
     }

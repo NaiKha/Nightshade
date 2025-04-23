@@ -1,32 +1,63 @@
 package com.example.nightshade;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import nl.dionsegijn.konfetti.core.Party;
+import nl.dionsegijn.konfetti.core.PartyFactory;
+import nl.dionsegijn.konfetti.core.Position;
+import nl.dionsegijn.konfetti.core.Rotation;
+import nl.dionsegijn.konfetti.core.emitter.Emitter;
+import nl.dionsegijn.konfetti.core.emitter.EmitterConfig;
+import nl.dionsegijn.konfetti.core.models.Shape;
+import nl.dionsegijn.konfetti.core.models.Size;
+import nl.dionsegijn.konfetti.xml.*;
+
+import nl.dionsegijn.konfetti.xml.KonfettiView;
+
 public class StepCounter extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor stepCounter;
-    private boolean countingSteps = false;
-    private int stepsAtReset = -1;
+
+    private int currentSteps = 0;
     private TextView textView;
+    private KonfettiView konfettiView;
     private ImageView imageView;
+    private ProgressBar progressBar;
+    private boolean goalReached = false;
     private Handler handler;
     private Runnable imageSwitchRunnable;
+
     private boolean WalkingImage1 = true;
 
     @Override
@@ -39,9 +70,17 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        ImageView back = (ImageView) findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(StepCounter.this, Movement.class));
+            }
+        });
+        konfettiView = findViewById(R.id.konfettiView);
         textView = findViewById(R.id.textView6);
         imageView = findViewById(R.id.imageView6);
+        progressBar = findViewById(R.id.progressBar2);
 
         handler = new Handler();
         imageSwitchRunnable = new Runnable() {
@@ -69,29 +108,84 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
 
     private void startMotionActivity() {
         handler.post(imageSwitchRunnable); // Start the image switching
-        if (sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
-            stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+        if (stepCounter != null) {
+            sensorManager.unregisterListener(this);
             sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_UI);
-            countingSteps = true;
-            stepsAtReset = -1;
             textView.setText("Start walking...");
-        } else {
+        }
+        else {
             textView.setText("Step Counter is not supported on this device.");
         }
+    }
+    private void updateProgressBar(int currentSteps) {
+        progressBar.setProgress(currentSteps, true);
+
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            int totalSteps = (int) event.values[0];
+        if (event.sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
+            currentSteps++;
+            textView.setText("Steps taken: " + currentSteps);
+            updateProgressBar(currentSteps);
+            //Drawable confetti_sloth = ContextCompat.getDrawable(this, R.drawable.konfetti);
 
-            if (stepsAtReset == -1) {
-                stepsAtReset = totalSteps;
+            //Shape.DrawableShape sloth_shape = new Shape.DrawableShape(confetti_sloth, true);
+
+            if (!goalReached && currentSteps >= 200) {
+                goalReached = true;
+                triggerCelebration();
             }
 
-            int currentSteps = totalSteps - stepsAtReset;
-            textView.setText("Steps taken: " + currentSteps);
         }
+
+    }
+
+    private void triggerCelebration() {
+        EmitterConfig emitterConfig = new Emitter(300, TimeUnit.MILLISECONDS).max(300);
+        konfettiView.start(
+                new PartyFactory(emitterConfig)
+                        .shapes(Shape.Circle.INSTANCE, Shape.Square.INSTANCE)
+                        .spread(360)
+                        .position(0.0,0.0,1.0,1.0)
+                        .sizes(new Size(8,50,10))
+                        .timeToLive(2000).fadeOutEnabled(true).build()
+        );
+        vibrateAndNotify();
+    }
+
+    private void vibrateAndNotify() {
+        try {
+            Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            if (v != null && v.hasVibrator()) {
+                v.vibrate(2000);
+            }
+
+            MediaPlayer mp = MediaPlayer.create(this, R.raw.achievement);
+            if (mp != null) {
+                mp.setOnCompletionListener(mediaPlayer -> {
+                    try {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                mp.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, Movement.class);
+        startActivity(intent);
+        finish(); //removes current activity from stack
     }
 
     @Override
@@ -99,14 +193,14 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
 
     @Override
     protected void onResume() {
+        currentSteps = 0;
+        goalReached = false;
+        progressBar.setProgress(0);
+        textView.setText("Start walking...");
         super.onResume();
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-
-        if (stepCounter != null) {
+        if (sensorManager != null && stepCounter != null) {
             sensorManager.registerListener(this, stepCounter, SensorManager.SENSOR_DELAY_UI);
         }
-        stepsAtReset = -1;
     }
 
     @Override

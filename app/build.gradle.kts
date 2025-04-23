@@ -32,7 +32,7 @@ android {
 }
 
 dependencies {
-
+    implementation("nl.dionsegijn:konfetti-xml:2.0.5")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
