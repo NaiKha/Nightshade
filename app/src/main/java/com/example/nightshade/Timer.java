@@ -1,12 +1,12 @@
     package com.example.nightshade;
 
     import android.content.Intent;
+    import android.content.SharedPreferences;
     import android.os.Bundle;
     import android.os.CountDownTimer;
     import android.view.View;
     import android.widget.Button;
     import android.widget.EditText;
-    import android.os.VibrationEffect;
     import android.os.Vibrator;
 
     import androidx.activity.EdgeToEdge;
@@ -25,6 +25,8 @@
         private boolean started = false;
         private CountDownTimer countDownTimer;
         private Button start_pause;
+        private String focusTime;
+
         private long totalInMilliSecs = 0;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,11 @@
             EditText hours = (EditText)findViewById((R.id.card1));
             EditText mins = (EditText)findViewById((R.id.card2));
             EditText secs = (EditText)findViewById((R.id.card3));
+
+            SharedPreferences sharedPreferences = getSharedPreferences("FocusTimePref", MODE_PRIVATE);
+            focusTime = sharedPreferences.getString("focus_time", "25");
+            initializeTimer(hours, mins, secs);
+
 
             Button goMovementBtn = findViewById(R.id.go_movement_btn);
             goMovementBtn.setOnClickListener(new View.OnClickListener() {
@@ -91,13 +98,15 @@
                 @Override
                 public void onClick(View v) {
 
-                    hours.setText("00");
-                    mins.setText("00");
-                    secs.setText("10");
-                    int h = Integer.parseInt(hours.getText().toString());
-                    int m = Integer.parseInt(mins.getText().toString());
-                    int s = Integer.parseInt(secs.getText().toString());
-                    totalInMilliSecs = calculateTimeLeft(h,m,s);
+//                    hours.setText("00");
+//                    mins.setText("00");
+//                    secs.setText("10");
+//                    int h = Integer.parseInt(hours.getText().toString());
+//                    int m = Integer.parseInt(mins.getText().toString());
+//                    int s = Integer.parseInt(secs.getText().toString());
+//                    totalInMilliSecs = calculateTimeLeft(h,m,s);
+                    totalInMilliSecs = calculateTimeLeft(0, Integer.parseInt(focusTime), 0);
+                    setCards(totalInMilliSecs, hours, mins, secs);
                     started = false;
                     start_pause.setText("Start");
                     if (countDownTimer != null) {
@@ -108,7 +117,12 @@
         });
         }
 
-    private int calculateTimeLeft(int h, int m, int s){
+        private void initializeTimer(EditText hours, EditText mins, EditText secs) {
+            totalInMilliSecs = calculateTimeLeft(0,Integer.parseInt(focusTime),0);
+            setCards(totalInMilliSecs, hours, mins, secs);
+        }
+
+        private int calculateTimeLeft(int h, int m, int s){
             return (h * 3600000) + (m * 60000) + (s * 1000);
     }
     private void enableEditTexts(EditText hours, EditText mins, EditText secs, boolean bol){
@@ -131,20 +145,12 @@
                 @Override
                 public void onTick(long millisUntilFinished) {
                     totalInMilliSecs = millisUntilFinished;
-                    NumberFormat f = new DecimalFormat("00");
-                    long hour = (millisUntilFinished / 3600000) % 24;
-                    long min = (millisUntilFinished / 60000) % 60;
-                    long sec = (millisUntilFinished / 1000) % 60;
-                    hours.setText(f.format(hour));
-                    mins.setText(f.format(min));
-                    secs.setText(f.format(sec));
+                    setCards(millisUntilFinished, hours, mins, secs);
 
                 }
                 @Override
                 public void onFinish() {
-                    hours.setText("00");
-                    mins.setText("15");
-                    secs.setText("00");
+                    initializeTimer(hours, mins, secs);
                     started =false;
                     start_pause.setText("Start");
                     totalInMilliSecs = 0;
@@ -165,5 +171,15 @@
                 }
 
             }.start();
+        }
+
+        private static void setCards(long millisUntilFinished, EditText hours, EditText mins, EditText secs) {
+            NumberFormat f = new DecimalFormat("00");
+            long hour = (millisUntilFinished / 3600000) % 24;
+            long min = (millisUntilFinished / 60000) % 60;
+            long sec = (millisUntilFinished / 1000) % 60;
+            hours.setText(f.format(hour));
+            mins.setText(f.format(min));
+            secs.setText(f.format(sec));
         }
     }
