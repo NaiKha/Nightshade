@@ -184,6 +184,7 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(this, Movement.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish(); //removes current activity from stack
     }
