@@ -136,10 +136,7 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
                 public void onTick(long millisUntilFinished) { }
                 public void onFinish() {
                     stopMicListening();
-                    if (!isFinishing() && !isDestroyed()) {
-                        Toast.makeText(Microphone.this, "Good job!", Toast.LENGTH_LONG).show();
-                    }
-
+                    Toast.makeText(Microphone.this, "You did great!", Toast.LENGTH_LONG).show();
                     Log.d("MicDebug", "Mic stopped due to timeout");
                 }
             }.start();
@@ -242,6 +239,15 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
     protected void onPause() {
         super.onPause();
         stopMicListening();
+        sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (accelerometer != null) {
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     @Override
