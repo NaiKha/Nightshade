@@ -28,7 +28,9 @@ public class Settings extends AppCompatActivity {
         });
         EditText focusTime = (EditText) findViewById(R.id.editTextNumber);
         Button saveButton =  (Button) findViewById(R.id.save_button);
-
+        SharedPreferences sharedPreferences = getSharedPreferences("FocusTimePref", MODE_PRIVATE);
+        String savedFocusTime = sharedPreferences.getString("focus_time", "25");
+        focusTime.setText(savedFocusTime);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -38,6 +40,8 @@ public class Settings extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("focus_time", focusTimeStr);
                 editor.apply();
+
+
 
                 Toast.makeText(Settings.this, "Your preferences are now saved!", Toast.LENGTH_SHORT).show();
             }
