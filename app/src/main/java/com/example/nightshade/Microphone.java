@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.media.MediaRecorder;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -30,8 +32,10 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
 
     private MediaRecorder mediaRecorder;
     private File tempAudioFile;
-    CountDownTimer countDown = null;
-    TextView secs;
+    private volatile boolean isMicActive = false;
+    private CountDownTimer countDown = null;
+    private CountDownTimer miclistening;
+    private TextView secs;
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private float mAccel;
@@ -40,6 +44,8 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
     private float ax, ay, az;
     private long lastShakeTime = 0;
     private long startupTime = 0;
+    private ImageView balloon;
+    private float currentScale = 1f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,16 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
             return insets;
         });
         startupTime = System.currentTimeMillis();
+
+        balloon = (ImageView) findViewById(R.id.imageBalloon);
+
+        ImageView back = (ImageView) findViewById(R.id.back2);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Microphone.this, Movement.class));
+            }
+        });
 
         // check permission for microphone usage
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -114,23 +130,51 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
             mediaRecorder.start();
             Log.d("MicDebug", "MediaRecorder started");
 
+            isMicActive = true;
+
+            miclistening = new CountDownTimer(5000, 1000) {
+                public void onTick(long millisUntilFinished) { }
+                public void onFinish() {
+                    stopMicListening();
+                    if (!isFinishing() && !isDestroyed()) {
+                        Toast.makeText(Microphone.this, "Good job!", Toast.LENGTH_LONG).show();
+                    }
+
+                    Log.d("MicDebug", "Mic stopped due to timeout");
+                }
+            }.start();
+
             //monitor volume
             new Thread(() -> {
                 Log.d("MicDebug", "Mic listening thread started");
-                while(mediaRecorder != null){
+                while(isMicActive && mediaRecorder != null){
                     try {
                         Thread.sleep(200); //checks every 200ms
                     } catch (InterruptedException e){
                         e.printStackTrace();
                     }
-                    int volume = mediaRecorder.getMaxAmplitude();
+                    //assign volume safely, in case getMaxAmplitude() returns null
+                    int volume;
+                    try {
+                        volume = mediaRecorder.getMaxAmplitude();
+                    } catch (IllegalStateException | NullPointerException e){
+                        Log.e("MicDebug", "Attempted to read from released MediaRecorder");
+                        break;
+                    }
+
                     Log.d("MicDebug", "Mic volume: " + volume);
                     if(volume > 25000){
                         runOnUiThread(() -> {
-                            TextView micResult = findViewById(R.id.textView13);
-                            micResult.setText("Nice exhale!");
+                            float targetScale = Math.min(1f + (volume / 25000f), 2.5f);
+                            currentScale = currentScale + 0.05f * (targetScale - currentScale);                            balloon.setImageResource(R.drawable.inflated);
+                            balloon.setScaleX(currentScale);
+                            balloon.setScaleY(currentScale);
+
+                            /*if (currentScale >= 2f) {
+                                Toast.makeText(Microphone.this, "You did great!", Toast.LENGTH_SHORT).show();
+                                stopMicListening();
+                            }*/
                         });
-                        stopMicListening();
                     }
                 }
             }).start();
@@ -139,13 +183,19 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
         }
     }
     private void stopMicListening(){
+        isMicActive = false;
         if (mediaRecorder != null){
             try {
                 mediaRecorder.stop();
-            } catch (Exception ignored) {
+            } catch (RuntimeException stopException) {
+                Log.w("MicDebug", "Recorder stop failed: " + stopException.getMessage());
             }
             mediaRecorder.release();
             mediaRecorder = null;
+        }
+        if (miclistening != null) {
+            miclistening.cancel();
+            miclistening = null;
         }
         if (tempAudioFile != null && tempAudioFile.exists()) {
             boolean deleted = tempAudioFile.delete();
@@ -165,8 +215,13 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
                 secs.setText("0");
                 vibrate();
                 startMicListening();
-                ImageView exhale = (ImageView) findViewById((R.id.imageView3));
+                ImageView exhale = (ImageView) findViewById(R.id.imageView3);
                 exhale.setImageResource(R.drawable.breath);
+                secs.setVisibility(View.INVISIBLE);
+                balloon.setVisibility(View.VISIBLE);
+                TextView breathOut = (TextView) findViewById(R.id.textView11);
+                breathOut.setText("Breath out:");
+
             }
         }.start();
     }
@@ -181,6 +236,12 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
         super.onDestroy();
         stopMicListening();
         cancelTimer((TextView) findViewById(R.id.textView20));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopMicListening();
     }
 
     @Override

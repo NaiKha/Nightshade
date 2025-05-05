@@ -4,7 +4,8 @@
     <string name="start">Start</string>
     <string name="activity_instructions">Shake your phone for a new exercise!</string>
     <string name="Microphone">
-        Take a deep breath and exhale into the microphone!
+        Step 1: Inhale for 5 seconds.\n
+        Step 2: Exhale into the microphone.\n
         When you are ready, shake to start.
     </string>
 </resources>
