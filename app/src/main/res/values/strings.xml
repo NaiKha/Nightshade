@@ -3,9 +3,13 @@
     <string name="Activity">New Activity</string>
     <string name="start">Start</string>
     <string name="activity_instructions">Shake your phone for a new exercise!</string>
-    <string name="Microphone">
-        Step 1: Inhale for 5 seconds.\n
-        Step 2: Exhale into the microphone.\n
+    <string name="microphone">
+        Step 1: Inhale for 5 seconds.
+        Step 2: Exhale into the microphone.
+    </string>
+    <string name="microphone2">
         When you are ready, shake to start.
     </string>
+
+
 </resources>

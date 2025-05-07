@@ -23,15 +23,13 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="220dp"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_marginTop="47dp"
-        android:layout_marginBottom="20dp"
         android:text="Breathing Exercise"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/imageView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,8 +38,6 @@
         android:id="@+id/imageView3"
         android:layout_width="220dp"
         android:layout_height="200dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
@@ -49,15 +45,14 @@
 
     <TextView
         android:id="@+id/textView5"
-        android:layout_width="247dp"
-        android:layout_height="95dp"
-        android:layout_marginBottom="55dp"
-        android:fontFamily="@font/oswald_extralight"
-        android:text="@string/Microphone"
+        android:layout_width="250dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/playfair_display"
+        android:text="@string/microphone"
         android:textAlignment="textStart"
         android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textView11"
+        app:layout_constraintBottom_toTopOf="@+id/textView13"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView3" />
@@ -65,9 +60,11 @@
     <TextView
         android:id="@+id/textView20"
         android:layout_width="60dp"
-        android:layout_height="90dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="170dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="31dp"
+        android:layout_marginBottom="32dp"
         android:background="#62C7C7C3"
         android:fontFamily="@font/oswald_extralight"
         android:gravity="center_horizontal"
@@ -75,35 +72,51 @@
         android:textColor="#6E4E37"
         android:textSize="50sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/imageBalloon"
+        app:layout_constraintEnd_toEndOf="@+id/imageBalloon"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView11"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/textView13"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="42dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginBottom="28dp"
         android:fontFamily="@font/oswald_extralight"
         android:text="Breath in:"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView20"
+        app:layout_constraintBottom_toBottomOf="@+id/textView20"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/textView13"
+        app:layout_constraintVertical_bias="0.992" />
 
     <ImageView
         android:id="@+id/imageBalloon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="24dp"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView11"
-        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        app:layout_constraintEnd_toEndOf="@+id/textView13"
+        app:layout_constraintTop_toBottomOf="@+id/textView13"
         app:srcCompat="@drawable/deflated" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="240dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="100dp"
+        android:fontFamily="@font/playfair_display"
+        android:text="@string/microphone2"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.473"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -57,6 +57,7 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         startupTime = System.currentTimeMillis();
 
         balloon = (ImageView) findViewById(R.id.imageBalloon);
