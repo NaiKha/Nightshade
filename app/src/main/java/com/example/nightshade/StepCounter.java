@@ -3,6 +3,7 @@ package com.example.nightshade;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,6 +13,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,8 +21,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -133,7 +137,7 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
 
             //Shape.DrawableShape sloth_shape = new Shape.DrawableShape(confetti_sloth, true);
 
-            if (!goalReached && currentSteps >= 200) {
+            if (!goalReached && currentSteps >= 20) {
                 goalReached = true;
                 triggerCelebration();
             }
@@ -153,8 +157,40 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
                         .timeToLive(2000).fadeOutEnabled(true).build()
         );
         vibrateAndNotify();
-    }
+        ConstraintLayout dialogLayout = findViewById(R.id.completeConstraintLayout);
+        View view  = LayoutInflater.from(StepCounter.this).inflate(R.layout.movement_dialog, dialogLayout);
+        Button mainPage = view.findViewById(R.id.goToHome);
+        Button redo = view.findViewById(R.id.redo);
+        Button next = view.findViewById(R.id.next);
+        AlertDialog.Builder builder = new AlertDialog.Builder(StepCounter.this);
+        builder.setView(view);
+        final AlertDialog alertDialog = builder.create();
+        mainPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(StepCounter.this, MainActivity.class));
+            }
+        });
+        redo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(StepCounter.this, StepCounter.class));
+            }
+        });
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(StepCounter.this, Movement.class));
+            }
+        });
 
+        if (alertDialog.getWindow() != null){
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        sensorManager.unregisterListener(this);
+        alertDialog.show();
+    }
+;
     private void vibrateAndNotify() {
         try {
             Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);

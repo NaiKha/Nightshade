@@ -8,6 +8,31 @@
     android:background="#FFF5EE"
     tools:context=".StepCounter">
 
+
+    <ImageView
+        android:id="@+id/imageView11"
+        android:layout_width="87dp"
+        android:layout_height="125dp"
+        android:src="@drawable/automn_leaves_left2"
+        app:layout_constraintBottom_toBottomOf="@+id/konfettiView"
+        app:layout_constraintEnd_toEndOf="@+id/imageView6"
+        app:layout_constraintHorizontal_bias="0.065"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/konfettiView"
+        app:layout_constraintVertical_bias="0.364" />
+
+    <ImageView
+        android:id="@+id/imageView10"
+        android:layout_width="90dp"
+        android:layout_height="116dp"
+        android:src="@drawable/automn_leaves_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView6"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.358" />
+
     <ImageView
         android:id="@+id/back"
         android:layout_width="59dp"
@@ -28,9 +53,10 @@
         android:id="@+id/konfettiView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        />
+        android:layout_alignParentTop="true"
+        tools:layout_editor_absoluteX="5dp"
+        tools:layout_editor_absoluteY="12dp" />
 
     <ImageView
         android:id="@+id/imageView6"
@@ -109,7 +135,7 @@
         android:layout_marginEnd="14dp"
         android:layout_marginBottom="40dp"
         android:indeterminate="false"
-        android:max="200"
+        android:max="20"
         android:progress="0"
         android:progressDrawable="@drawable/custom_progress"
         app:layout_constraintBottom_toTopOf="@+id/textView6"
