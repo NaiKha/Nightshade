@@ -67,6 +67,16 @@ public class Movement extends ComponentActivity implements SensorEventListener {
             return insets;
         });
 
+        ImageView backButton = findViewById(R.id.back);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Movement.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
 
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -80,7 +90,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
         mAccelLast = SensorManager.GRAVITY_EARTH;
 
-        luxValueText = findViewById(R.id.luxValueText);
+
 
 
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
@@ -100,7 +110,6 @@ public class Movement extends ComponentActivity implements SensorEventListener {
             if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
             float lux = event.values[0];
 
-            luxValueText.setText("Lux: " + lux);
 
             if (lux < COVER_THRESHOLD) {
                 if (!isCovered) {
