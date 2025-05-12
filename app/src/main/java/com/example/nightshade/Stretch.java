@@ -18,21 +18,15 @@ import androidx.appcompat.app.AppCompatActivity;
 public class Stretch extends AppCompatActivity implements SensorEventListener {
 
     private SensorManager sensorManager;
-    private Sensor accelerometer;
+    private Sensor linearAcceleration;
+
     private ImageView stretchImage;
     private TextView readyText;
 
     private boolean armsUp = false;
     private boolean isReady = false;
-    private long lastUpdateTime = 0;
-
-    private static final float MOVEMENT_THRESHOLD = 1.5f;
-    private static final long MIN_TIME_BETWEEN_SWITCH = 1500;
-    private static final long START_DELAY_MS = 1000;
-    private static final int SAMPLE_SIZE = 10;
-    private float[] zSamples = new float[SAMPLE_SIZE];
-    private int sampleIndex = 0;
-
+    private long lastEventTime = 0;
+    private long lastTimestamp = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,24 +34,27 @@ public class Stretch extends AppCompatActivity implements SensorEventListener {
         setContentView(R.layout.activity_stretch);
 
         stretchImage = findViewById(R.id.stretchImage);
-        stretchImage.setImageResource(R.drawable.stretch1);
-
         readyText = findViewById(R.id.readyText);
+        stretchImage.setImageResource(R.drawable.stretch1);
         readyText.setVisibility(View.VISIBLE);
 
+        ImageView back = findViewById(R.id.back);
+        back.setOnClickListener(v -> didFinish());
+
+        // Vi vill inte att en av aktiveringsskakningarna ska räknas...
         new Handler().postDelayed(() -> {
             isReady = true;
-            readyText.setVisibility(View.GONE);
-        }, START_DELAY_MS);
+            readyText.setText(R.string.stretcha);
+        }, 1000);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        linearAcceleration = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, linearAcceleration, SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override
@@ -68,53 +65,54 @@ public class Stretch extends AppCompatActivity implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (!isReady || event.sensor.getType() != Sensor.TYPE_ACCELEROMETER) return;
-
-        float z = event.values[2];
-        zSamples[sampleIndex % SAMPLE_SIZE] = z;
-        sampleIndex++;
-
-        if (sampleIndex < SAMPLE_SIZE) return;
-
-        float averageZ = 0;
-        for (float zVal : zSamples) {
-            averageZ += zVal;
+        if (!isReady || event.sensor.getType() != Sensor.TYPE_LINEAR_ACCELERATION) {
+            lastTimestamp = event.timestamp;
+            return;
         }
-        averageZ /= SAMPLE_SIZE;
 
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastUpdateTime < MIN_TIME_BETWEEN_SWITCH) return;
-
-        if (!armsUp && averageZ < -MOVEMENT_THRESHOLD) {
-            stretchImage.setImageResource(R.drawable.stretch2); // arms up
-            armsUp = true;
-            giveFeedback();
-            lastUpdateTime = currentTime;
-        } else if (armsUp && averageZ > MOVEMENT_THRESHOLD) {
-            stretchImage.setImageResource(R.drawable.stretch1); // arms down
-            armsUp = false;
-            giveFeedback();
-            lastUpdateTime = currentTime;
+        long nowNs = event.timestamp;
+        if (lastTimestamp != 0L) {
+            float deltaTime = (nowNs - lastTimestamp) / 1_000_000_000f;
+            float y = event.values[1];
+            long now = System.currentTimeMillis();
+            if (Math.abs(y * deltaTime) > 0.275f && (now - lastEventTime) > 2000) {
+                toggleStretch();
+                lastEventTime = now;
+                resetTime();
+            }
         }
+        lastTimestamp = nowNs;
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Not used
+    }
+
+    private void toggleStretch() {
+        stretchImage.setImageResource(armsUp ? R.drawable.stretch1 : R.drawable.stretch2);
+        armsUp = !armsUp;
+        giveFeedback();
     }
 
     private void giveFeedback() {
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        if (v != null) {
-            v.vibrate(200);
-        }
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(200);
     }
+
+    private void resetTime() {
+        lastTimestamp = 0L;
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        didFinish();
+    }
+
+    private void didFinish() {
         Intent intent = new Intent(this, Movement.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
-        finish(); //removes current activity from stack
+        finish();
     }
 }
