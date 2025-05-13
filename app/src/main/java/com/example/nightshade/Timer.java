@@ -19,6 +19,7 @@
     import java.text.NumberFormat;
 
     import android.media.MediaPlayer;
+    import android.widget.ImageView;
 
 
     public class Timer extends AppCompatActivity {
@@ -49,14 +50,11 @@
             focusTime = sharedPreferences.getString("focus_time", "25");
             initializeTimer(hours, mins, secs);
 
-
-            Button goMovementBtn = findViewById(R.id.go_movement_btn);
-            goMovementBtn.setOnClickListener(new View.OnClickListener() {
+            ImageView back = (ImageView) findViewById(R.id.back3);
+            back.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(Timer.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    startActivity(new Intent(Timer.this, MainActivity.class));
                 }
             });
 
