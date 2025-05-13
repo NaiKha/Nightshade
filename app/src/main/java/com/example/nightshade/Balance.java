@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ImageView;
 
@@ -24,13 +25,19 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
     private ImageView levelImage;
 
     private TextView feedback;
+    private ProgressBar balanceProgressBar;
+    private int balanceSeconds = 0;
+    private long lastBalanceTimestamp = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance);
 
-        feedback = findViewById(R.id.feedbackTextView); // Add this in your XML
+        feedback = findViewById(R.id.feedbackTextView);
+        balanceProgressBar = findViewById(R.id.balanceProgressBar);
+
 
         levelImage = findViewById(R.id.level_image);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -55,6 +62,10 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+        balanceSeconds = 0;
+        lastBalanceTimestamp = 0;
+        if (balanceProgressBar != null) balanceProgressBar.setProgress(0);
+
     }
 
     @Override
@@ -64,18 +75,34 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
             float y = event.values[1];
             float z = event.values[2];
 
-
             float tiltAngle = -x * 5;
             levelImage.setRotation(tiltAngle);
 
+            boolean isBalanced = Math.abs(x) < 2 && Math.abs(y) < 2 && z > 8 && z < 11;
 
-            if (Math.abs(x) < 2 && Math.abs(y) < 2 && z > 8 && z < 11) {
-                feedback.setText("Good balance! Stay steady...");
+            if (isBalanced) {
+                long now = System.currentTimeMillis();
+                if (lastBalanceTimestamp == 0 || now - lastBalanceTimestamp >= 1000) {
+                    balanceSeconds++;
+                    lastBalanceTimestamp = now;
+                    balanceProgressBar.setProgress(balanceSeconds);
+                }
+
+                if (balanceSeconds >= 5) {
+                    feedback.setText("Awesome! You did it! 🎉");
+                    sensorManager.unregisterListener(this); // Stop checking
+                } else {
+                    feedback.setText("Good balance! Stay steady...");
+                }
             } else {
                 feedback.setText("Hold still... Try to balance!");
+                balanceSeconds = 0;
+                lastBalanceTimestamp = 0;
+                balanceProgressBar.setProgress(0);
             }
         }
     }
+
 
 
     @Override
