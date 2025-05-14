@@ -12,6 +12,7 @@ import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -147,7 +148,7 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
     }
 
     private void triggerCelebration() {
-        EmitterConfig emitterConfig = new Emitter(300, TimeUnit.MILLISECONDS).max(300);
+        EmitterConfig emitterConfig = new Emitter(500, TimeUnit.MILLISECONDS).max(500);
         konfettiView.start(
                 new PartyFactory(emitterConfig)
                         .shapes(Shape.Circle.INSTANCE, Shape.Square.INSTANCE)
@@ -159,36 +160,24 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
         vibrateAndNotify();
         ConstraintLayout dialogLayout = findViewById(R.id.completeConstraintLayout);
         View view  = LayoutInflater.from(StepCounter.this).inflate(R.layout.movement_dialog, dialogLayout);
-        Button mainPage = view.findViewById(R.id.goToHome);
-        Button redo = view.findViewById(R.id.redo);
-        Button next = view.findViewById(R.id.next);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(StepCounter.this);
         builder.setView(view);
         final AlertDialog alertDialog = builder.create();
-        mainPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(StepCounter.this, MainActivity.class));
-            }
-        });
-        redo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(StepCounter.this, StepCounter.class));
-            }
-        });
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(StepCounter.this, Movement.class));
-            }
-        });
+
 
         if (alertDialog.getWindow() != null){
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
         sensorManager.unregisterListener(this);
         alertDialog.show();
+        new Handler().postDelayed(() -> {
+            if (alertDialog.isShowing()) {
+                alertDialog.dismiss();
+                startActivity(new Intent(StepCounter.this, Movement.class));
+            }
+        }, 5000);
+
     }
 ;
     private void vibrateAndNotify() {

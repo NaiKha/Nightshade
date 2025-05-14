@@ -1,11 +1,16 @@
 package com.example.nightshade;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Vibrator;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -13,17 +18,28 @@ import android.widget.ImageView;
 
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import java.util.concurrent.TimeUnit;
+
+import nl.dionsegijn.konfetti.core.PartyFactory;
+import nl.dionsegijn.konfetti.core.emitter.Emitter;
+import nl.dionsegijn.konfetti.core.emitter.EmitterConfig;
+import nl.dionsegijn.konfetti.core.models.Shape;
+import nl.dionsegijn.konfetti.core.models.Size;
+import nl.dionsegijn.konfetti.xml.KonfettiView;
 
 public class Balance extends AppCompatActivity implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
     private ImageView levelImage;
-
+    private KonfettiView konfettiView;
     private TextView feedback;
     private ProgressBar balanceProgressBar;
     private int balanceSeconds = 0;
@@ -37,7 +53,7 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
 
         feedback = findViewById(R.id.feedbackTextView);
         balanceProgressBar = findViewById(R.id.balanceProgressBar);
-
+        konfettiView = findViewById(R.id.konfettiView);
 
         levelImage = findViewById(R.id.level_image);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -90,6 +106,8 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
 
                 if (balanceSeconds >= 5) {
                     feedback.setText("Awesome! You did it! 🎉");
+                    triggerCelebration();
+
                     sensorManager.unregisterListener(this); // Stop checking
                 } else {
                     feedback.setText("Good balance! Stay steady...");
@@ -114,5 +132,62 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         finish(); //removes current activity from stack
+    }
+
+    private void triggerCelebration() {
+        EmitterConfig emitterConfig = new Emitter(500, TimeUnit.MILLISECONDS).max(500);
+        konfettiView.start(
+                new PartyFactory(emitterConfig)
+                        .shapes(Shape.Circle.INSTANCE, Shape.Square.INSTANCE)
+                        .spread(360)
+                        .position(0.0,0.0,1.0,1.0)
+                        .sizes(new Size(8,50,10))
+                        .timeToLive(2000).fadeOutEnabled(true).build()
+        );
+        vibrateAndNotify();
+        ConstraintLayout dialogLayout = findViewById(R.id.completeConstraintLayout);
+        View view  = LayoutInflater.from(Balance.this).inflate(R.layout.movement_dialog, dialogLayout);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(Balance.this);
+        builder.setView(view);
+        final AlertDialog alertDialog = builder.create();
+
+
+        if (alertDialog.getWindow() != null){
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        }
+        sensorManager.unregisterListener(this);
+        alertDialog.show();
+        new Handler().postDelayed(() -> {
+            if (alertDialog.isShowing()) {
+                alertDialog.dismiss();
+                startActivity(new Intent(Balance.this, Movement.class));
+            }
+        }, 5000);
+
+    }
+    ;
+    private void vibrateAndNotify() {
+        try {
+            Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            if (v != null && v.hasVibrator()) {
+                v.vibrate(2000);
+            }
+
+            MediaPlayer mp = MediaPlayer.create(this, R.raw.achievement);
+            if (mp != null) {
+                mp.setOnCompletionListener(mediaPlayer -> {
+                    try {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+                mp.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
