@@ -47,8 +47,7 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
     private ProgressBar balanceProgressBar;
     private int balanceSeconds = 0;
     private long lastBalanceTimestamp = 0;
-    private Vibrator vibrator;
-    private boolean isVibrating = false;
+
 
 
 
@@ -60,7 +59,7 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
         feedback = findViewById(R.id.feedbackTextView);
         balanceProgressBar = findViewById(R.id.balanceProgressBar);
         konfettiView = findViewById(R.id.konfettiView);
-        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
 
 
         levelImage = findViewById(R.id.level_image);
@@ -106,10 +105,6 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
 
             if (isBalanced) {
 
-                if (isVibrating && vibrator != null) {
-                    vibrator.cancel();
-                    isVibrating = false;
-                }
 
                 long now = System.currentTimeMillis();
                 if (lastBalanceTimestamp == 0 || now - lastBalanceTimestamp >= 100) {
@@ -134,15 +129,6 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
                     feedback.setText("Good balance! Stay steady...");
                 }
             } else {
-                if (!isVibrating && vibrator != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        long[] pattern = {0, 500, 500};
-                        vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0)); // repeat forever
-                    } else {
-                        vibrator.vibrate(new long[]{0, 500, 500}, 0); // repeat forever
-                    }
-                    isVibrating = true;
-                }
 
                 feedback.setText("Hold still... Try to balance!");
                 balanceSeconds = 0;
