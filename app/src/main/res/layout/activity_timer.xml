@@ -13,7 +13,7 @@
         android:id="@+id/back3"
         android:layout_width="53dp"
         android:layout_height="46dp"
-        android:src="@drawable/back2"
+        android:src="@drawable/back_arrow2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
