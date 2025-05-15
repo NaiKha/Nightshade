@@ -97,8 +97,23 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         if (lightSensor != null) {
             sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
+        loadListFromPreferences();
     }
-
+    private void saveListLocally() {
+        getSharedPreferences("activity_prefs", MODE_PRIVATE)
+                .edit()
+                .putString("list", String.join(",", activityQueue))
+                .apply();
+    }
+    private void loadListFromPreferences() {
+        String saved = getSharedPreferences("activity_prefs", MODE_PRIVATE)
+                .getString("list", null);
+        if (saved != null && !saved.isEmpty()) {
+            activityQueue = new ArrayList<>(Arrays.asList(saved.split(",")));
+        } else {
+            initializeQueue();
+        }
+    }
     @Override
     public void onSensorChanged(SensorEvent event) {
         // fetch x, y, z values, first checking if the sensor triggered is the accelerometer
@@ -167,15 +182,17 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     private void initializeQueue() {
         activityQueue = new ArrayList<>(Arrays.asList(activities));
         Collections.shuffle(activityQueue);
+        saveListLocally();
     }
     private void randomAnswer() {
         if (isActivityLaunching) return;
         isActivityLaunching = true;
 
         if (activityQueue.isEmpty()) {
-            initializeQueue(); // do when all activities are used
+            initializeQueue();
         }
         String rActivity = activityQueue.remove(0);
+        saveListLocally();
         Intent intent = null;
 
         switch (rActivity) {
