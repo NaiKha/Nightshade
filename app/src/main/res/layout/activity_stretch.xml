@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/stretchLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4EBE4">
+    android:background="#F4EBE4"
+    tools:context=".Stretch">
 
     <ImageView
         android:id="@+id/stretchImage"
@@ -14,9 +15,18 @@
         android:layout_marginTop="100dp"
         android:scaleType="fitCenter"
         android:src="@drawable/stretch1"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <nl.dionsegijn.konfetti.xml.KonfettiView
+        android:id="@+id/konfettiView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        tools:layout_editor_absoluteX="5dp"
+        tools:layout_editor_absoluteY="12dp" />
 
     <ImageView
         android:id="@+id/back"
@@ -37,11 +47,13 @@
         android:id="@+id/readyText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get Ready..."
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="Time to Stretch..! \n \n Raise your hands up and down"
+        android:textColor="#6F4E37"
         android:textSize="24sp"
-        android:textColor="#000000"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/stretchImage"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/stretchImage" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
