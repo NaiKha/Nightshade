@@ -1,5 +1,6 @@
 package com.example.nightshade;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Sensor;
@@ -7,8 +8,10 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +47,9 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
     private ProgressBar balanceProgressBar;
     private int balanceSeconds = 0;
     private long lastBalanceTimestamp = 0;
+    private Vibrator vibrator;
+    private boolean isVibrating = false;
+
 
 
     @Override
@@ -54,6 +60,8 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
         feedback = findViewById(R.id.feedbackTextView);
         balanceProgressBar = findViewById(R.id.balanceProgressBar);
         konfettiView = findViewById(R.id.konfettiView);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
 
         levelImage = findViewById(R.id.level_image);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -97,29 +105,62 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
             boolean isBalanced = Math.abs(x) < 2 && Math.abs(y) < 2 && z > 8 && z < 11;
 
             if (isBalanced) {
-                long now = System.currentTimeMillis();
-                if (lastBalanceTimestamp == 0 || now - lastBalanceTimestamp >= 1000) {
-                    balanceSeconds++;
-                    lastBalanceTimestamp = now;
-                    balanceProgressBar.setProgress(balanceSeconds);
+
+                if (isVibrating && vibrator != null) {
+                    vibrator.cancel();
+                    isVibrating = false;
                 }
 
-                if (balanceSeconds >= 5) {
+                long now = System.currentTimeMillis();
+                if (lastBalanceTimestamp == 0 || now - lastBalanceTimestamp >= 100) {
+                    balanceSeconds++;
+                    lastBalanceTimestamp = now;
+
+                    ObjectAnimator anim = ObjectAnimator.ofInt(
+                            balanceProgressBar,
+                            "progress",
+                            balanceProgressBar.getProgress(),
+                            balanceSeconds
+                    );
+                    anim.setDuration(90);
+                    anim.start();
+                }
+
+                if (balanceSeconds >= 50) {
                     feedback.setText("Awesome! You did it! 🎉");
                     triggerCelebration();
-
-                    sensorManager.unregisterListener(this); // Stop checking
+                    sensorManager.unregisterListener(this);
                 } else {
                     feedback.setText("Good balance! Stay steady...");
                 }
             } else {
+                if (!isVibrating && vibrator != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        long[] pattern = {0, 500, 500};
+                        vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0)); // repeat forever
+                    } else {
+                        vibrator.vibrate(new long[]{0, 500, 500}, 0); // repeat forever
+                    }
+                    isVibrating = true;
+                }
+
                 feedback.setText("Hold still... Try to balance!");
                 balanceSeconds = 0;
                 lastBalanceTimestamp = 0;
-                balanceProgressBar.setProgress(0);
+
+                ObjectAnimator resetAnim = ObjectAnimator.ofInt(
+                        balanceProgressBar,
+                        "progress",
+                        balanceProgressBar.getProgress(),
+                        0
+                );
+                resetAnim.setDuration(300);
+                resetAnim.start();
             }
         }
     }
+
+
 
 
 
