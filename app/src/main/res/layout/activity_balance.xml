@@ -8,7 +8,7 @@
     android:background="#FFF5EE"
     tools:context=".Balance">
 
-    <!-- Back button -->
+
     <ImageView
         android:id="@+id/back2"
         android:layout_width="59dp"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Sloth image -->
+
     <ImageView
         android:id="@+id/level_image"
         android:layout_width="150dp"
@@ -30,7 +30,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Progress Bar -->
     <ProgressBar
         android:id="@+id/balanceProgressBar"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -40,12 +39,11 @@
         android:max="5"
         android:progress="0"
         android:indeterminate="false"
-        android:progressTint="#4CAF50"
+        android:progressDrawable="@drawable/custom_progress"
         app:layout_constraintTop_toBottomOf="@id/level_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Instruction Text -->
     <TextView
         android:id="@+id/textView3"
         android:layout_width="300dp"
@@ -59,7 +57,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Feedback Text -->
     <TextView
         android:id="@+id/feedbackTextView"
         android:layout_width="wrap_content"
@@ -72,7 +69,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Confetti view (full screen, behind everything) -->
+
     <nl.dionsegijn.konfetti.xml.KonfettiView
         android:id="@+id/konfettiView"
         android:layout_width="match_parent"
