@@ -3,9 +3,11 @@
     <string name="Activity">New Activity</string>
     <string name="start">Start</string>
     <string name="activity_instructions">Shake your phone for a new exercise!</string>
-    <string name="microphone">
+    <string name="microphone_step1">
         Step 1: Inhale for 5 seconds.
-        Step 2: Exhale into the microphone.
+    </string>
+    <string name="microphone_step2">
+        Step 2: Blow into the microphone to inflate the balloon.
     </string>
     <string name="microphone2">
         When you are ready, shake to start.

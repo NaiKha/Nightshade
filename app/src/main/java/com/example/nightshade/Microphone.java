@@ -10,13 +10,16 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,8 +45,9 @@ import nl.dionsegijn.konfetti.core.models.Shape;
 import nl.dionsegijn.konfetti.core.models.Size;
 import nl.dionsegijn.konfetti.xml.KonfettiView;
 
-public class Microphone extends AppCompatActivity implements SensorEventListener {
+public class Microphone extends AppCompatActivity {
 
+    private Button startButton;
     private MediaRecorder mediaRecorder;
     private File tempAudioFile;
     private volatile boolean isMicActive = false;
@@ -61,6 +65,8 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
     private long startupTime = 0;
     private ImageView balloon;
     private float currentScale = 1f;
+    private MediaPlayer countdownPlayer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +78,12 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        startButton = findViewById(R.id.startButton2);
         konfettiView = findViewById(R.id.konfettiView2);
         startupTime = System.currentTimeMillis();
-
+        countdownPlayer = MediaPlayer.create(this, R.raw.countdown_5);
         balloon = (ImageView) findViewById(R.id.imageBalloon);
+        secs = (TextView)findViewById((R.id.textView20));
 
         ImageView back = (ImageView) findViewById(R.id.back2);
         back.setOnClickListener(new View.OnClickListener() {
@@ -90,9 +98,12 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
             requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
         }
 
-        secs = (TextView)findViewById((R.id.textView20));
-        //secs.setText("5");
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        startButton.setOnClickListener(v -> {
+            startButton.setEnabled(false); // Prevent repeat clicks
+            startTimer(secs);
+        });
+
+        /*sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this,
                 accelerometer,
@@ -101,7 +112,7 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
         // set up baseline
         mAccel = 9f; // 10 approx. earth's gravity, was too high
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        mAccelLast = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;*/
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -117,10 +128,7 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
     }
 
     private void vibrate() {
-        // Get instance of Vibrator from current Context
         Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-
-        // Vibrate for 400 milliseconds
         v.vibrate(400);
     }
     private void startMicListening(){
@@ -152,7 +160,6 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
                 public void onTick(long millisUntilFinished) { }
                 public void onFinish() {
                     stopMicListening();
-                    //Toast.makeText(Microphone.this, "You did great!", Toast.LENGTH_LONG).show();
                     triggerCelebration();
                     Log.d("MicDebug", "Mic stopped due to timeout");
                 }
@@ -180,7 +187,8 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
                     if(volume > 25000){
                         runOnUiThread(() -> {
                             float targetScale = Math.min(1f + (volume / 25000f), 2.5f);
-                            currentScale = currentScale + 0.05f * (targetScale - currentScale);                            balloon.setImageResource(R.drawable.inflated);
+                            currentScale = currentScale + 0.05f * (targetScale - currentScale);
+                            balloon.setImageResource(R.drawable.inflated);
                             balloon.setScaleX(currentScale);
                             balloon.setScaleY(currentScale);
 
@@ -219,25 +227,39 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
     }
 
     public void startTimer(TextView secs) {
+        if (countdownPlayer != null) {
+            countdownPlayer.start();
+        }
         countDown = new CountDownTimer(5000, 1000) {
+            int count = 5;
             public void onTick(long millisUntilFinished) {
-                NumberFormat f = new DecimalFormat("0");
-                long sec = (millisUntilFinished / 1000) % 60;
-                secs.setText(f.format(sec));
+                secs.setText(String.valueOf(count));
+                vibrateCountDown();
+                count--;
             }
             public void onFinish() {
                 secs.setText("0");
                 vibrate();
-                startMicListening();
-                ImageView exhale = (ImageView) findViewById(R.id.imageView3);
-                exhale.setImageResource(R.drawable.breath);
+                ImageView sloth = (ImageView) findViewById(R.id.imageView3);
+                sloth.setImageResource(R.drawable.breath);
                 secs.setVisibility(View.INVISIBLE);
                 balloon.setVisibility(View.VISIBLE);
-                TextView breathOut = (TextView) findViewById(R.id.textView11);
-                breathOut.setText("Breath out:");
+                startMicListening();
 
             }
         }.start();
+    }
+    private void vibrateCountDown() {
+        Vibrator v2 = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        if (v2 != null && v2.hasVibrator()) {
+            VibrationEffect effect = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                effect = VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v2.vibrate(effect);
+            }
+        }
     }
 
     public void cancelTimer(TextView secs) {
@@ -256,18 +278,18 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
     protected void onPause() {
         super.onPause();
         stopMicListening();
-        sensorManager.unregisterListener(this);
+        //sensorManager.unregisterListener(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (accelerometer != null) {
+        /*if (accelerometer != null) {
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        }
+        }*/
     }
 
-    @Override
+    /*@Override
     public void onSensorChanged(SensorEvent event) {
         // fetch x, y, z values, first checking if the sensor triggered is the accelerometer
         if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
@@ -294,11 +316,11 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
             vibrate();
             startTimer(secs);
         }
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -331,7 +353,7 @@ public class Microphone extends AppCompatActivity implements SensorEventListener
         if (alertDialog.getWindow() != null){
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
-        sensorManager.unregisterListener(this);
+        //sensorManager.unregisterListener(this);
         alertDialog.show();
         new Handler().postDelayed(() -> {
             if (alertDialog.isShowing()) {
