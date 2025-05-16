@@ -121,7 +121,7 @@ public class Balance extends AppCompatActivity implements SensorEventListener {
                     anim.start();
                 }
 
-                if (balanceSeconds >= 50) {
+                if (balanceSeconds >= 100) {
                     feedback.setText("Awesome! You did it! 🎉");
                     triggerCelebration();
                     sensorManager.unregisterListener(this);

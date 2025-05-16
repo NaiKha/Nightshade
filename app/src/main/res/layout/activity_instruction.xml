@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/instructionImage"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:src="@drawable/balance"
         android:layout_marginTop="80dp"
         app:layout_constraintTop_toTopOf="parent"
