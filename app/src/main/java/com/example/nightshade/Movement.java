@@ -47,7 +47,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     private boolean isCovered = false;
     private long coverStartTime = 0;
     private static final int COVER_THRESHOLD = 15;
-    private static final int COVER_DURATION_MS = 3000;
+    private static final int COVER_DURATION_MS = 2000;
 
     private TextView luxValueText;
     private boolean isActivityLaunching = false;

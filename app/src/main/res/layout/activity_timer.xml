@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/timerbackground"
+    android:background="@drawable/timer2"
     tools:context=".Timer">
 
 
@@ -100,8 +100,8 @@
 
     <Button
         android:id="@+id/reset_btn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginEnd="69dp"
         android:backgroundTint="#dca1a1"
         android:text="RESET"
@@ -113,11 +113,11 @@
 
     <Button
         android:id="@+id/start_btn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginStart="59dp"
         android:layout_marginEnd="47dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="100dp"
         android:backgroundTint="#bea6c9"
         android:text="START"
         android:textColor="#FFF5EE"

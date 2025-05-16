@@ -35,7 +35,7 @@
         android:id="@+id/instructionText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Stand on one foot and try to keep the sloth balanced for 5 seconds. Press Start when you're ready!"
+        android:text="Stand on one foot and try to keep the sloth balanced for 10 seconds. Hold the phone flat with the screen facing directly up toward the ceiling. Press Start when you're ready!"
         android:textColor="#6E4E37"
         android:textSize="18sp"
         android:gravity="center"
