@@ -46,7 +46,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
     private Sensor lightSensor;
     private boolean isCovered = false;
     private long coverStartTime = 0;
-    private static final int COVER_THRESHOLD = 10;
+    private static final int COVER_THRESHOLD = 15;
     private static final int COVER_DURATION_MS = 3000;
 
     private TextView luxValueText;
@@ -124,6 +124,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         }
             if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
             float lux = event.values[0];
+                Log.d("LightSensor", "Lux value: " + lux);
 
 
             if (lux < COVER_THRESHOLD) {
@@ -226,7 +227,6 @@ public class Movement extends ComponentActivity implements SensorEventListener {
         intent.putExtra("start_timer", true);  // Pass data to indicate that the timer should be started
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
-        finish();
     }
 
 
