@@ -206,7 +206,7 @@ public class Movement extends ComponentActivity implements SensorEventListener {
                 break;
 
             case "Stretch":
-                intent = new Intent(this, Stretch.class);
+                intent = new Intent(this, Instructions_Stretch.class);
                 break;
 
             case "Balance":

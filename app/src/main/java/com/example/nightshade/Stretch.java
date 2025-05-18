@@ -61,10 +61,8 @@ public class Stretch extends AppCompatActivity implements SensorEventListener {
         ImageView back = findViewById(R.id.back);
         back.setOnClickListener(v -> didFinish());
 
-        // Vi vill inte att en av aktiveringsskakningarna ska räknas...
         new Handler().postDelayed(() -> {
             isReady = true;
-            readyText.setText(R.string.stretcha);
         }, 1000);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -95,7 +93,7 @@ public class Stretch extends AppCompatActivity implements SensorEventListener {
             float deltaTime = (nowNs - lastTimestamp) / 1_000_000_000f;
             float y = event.values[1];
             long now = System.currentTimeMillis();
-            if (Math.abs(y * deltaTime) > 0.250f && (now - lastEventTime) > 2000) {
+            if (Math.abs(y * deltaTime) > 0.250f && (now - lastEventTime) > 500) {
                 toggleStretch();
                 lastEventTime = now;
                 resetTime();
