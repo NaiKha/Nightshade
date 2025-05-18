@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -61,8 +59,6 @@ public class Microphone extends AppCompatActivity {
     private float mAccelCurrent;
     private float mAccelLast;
     private float ax, ay, az;
-    private long lastShakeTime = 0;
-    private long startupTime = 0;
     private ImageView balloon;
     private float currentScale = 1f;
     private MediaPlayer countdownPlayer;
@@ -80,7 +76,6 @@ public class Microphone extends AppCompatActivity {
         });
         startButton = findViewById(R.id.startButton2);
         konfettiView = findViewById(R.id.konfettiView2);
-        startupTime = System.currentTimeMillis();
         countdownPlayer = MediaPlayer.create(this, R.raw.countdown_5);
         balloon = (ImageView) findViewById(R.id.imageBalloon);
         secs = (TextView)findViewById((R.id.textView20));
@@ -102,17 +97,6 @@ public class Microphone extends AppCompatActivity {
             startButton.setEnabled(false); // Prevent repeat clicks
             startTimer(secs);
         });
-
-        /*sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this,
-                accelerometer,
-                SensorManager.SENSOR_DELAY_NORMAL);
-
-        // set up baseline
-        mAccel = 9f; // 10 approx. earth's gravity, was too high
-        mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        mAccelLast = SensorManager.GRAVITY_EARTH;*/
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -191,11 +175,6 @@ public class Microphone extends AppCompatActivity {
                             balloon.setImageResource(R.drawable.ballong);
                             balloon.setScaleX(currentScale);
                             balloon.setScaleY(currentScale);
-
-                            /*if (currentScale >= 2f) {
-                                Toast.makeText(Microphone.this, "You did great!", Toast.LENGTH_SHORT).show();
-                                stopMicListening();
-                            }*/
                         });
                     }
                 }
@@ -284,43 +263,7 @@ public class Microphone extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        /*if (accelerometer != null) {
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        }*/
     }
-
-    /*@Override
-    public void onSensorChanged(SensorEvent event) {
-        // fetch x, y, z values, first checking if the sensor triggered is the accelerometer
-        if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
-            ax = event.values[0];
-            ay = event.values[1];
-            az = event.values[2];
-        }
-
-        // save previous acceleration
-        mAccelLast = mAccelCurrent;
-        // use total acceleration magnitude formula
-        mAccelCurrent = (float) Math.sqrt((double) ax * ax + ay * ay + az * az);
-        // difference between last and new acceleration
-        float delta = mAccelCurrent - mAccelLast;
-        // multiply by 0.9f for a more stable shake detection
-        mAccel = mAccel * 0.9f + delta;
-        //mAccel = delta;
-
-        long time = System.currentTimeMillis();
-        if (time - startupTime < 2000) return;
-
-        if (mAccel > 10f && time - lastShakeTime > 2000) {
-            lastShakeTime = time;
-            vibrate();
-            startTimer(secs);
-        }
-    }*/
-
-    /*@Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    }*/
 
     @Override
     public void onBackPressed() {
@@ -353,7 +296,6 @@ public class Microphone extends AppCompatActivity {
         if (alertDialog.getWindow() != null){
             alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         }
-        //sensorManager.unregisterListener(this);
         alertDialog.show();
         new Handler().postDelayed(() -> {
             if (alertDialog.isShowing()) {
