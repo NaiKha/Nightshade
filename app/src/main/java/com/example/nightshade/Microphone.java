@@ -188,7 +188,7 @@ public class Microphone extends AppCompatActivity {
                         runOnUiThread(() -> {
                             float targetScale = Math.min(1f + (volume / 25000f), 2.5f);
                             currentScale = currentScale + 0.05f * (targetScale - currentScale);
-                            balloon.setImageResource(R.drawable.inflated);
+                            balloon.setImageResource(R.drawable.ballong);
                             balloon.setScaleX(currentScale);
                             balloon.setScaleY(currentScale);
 
