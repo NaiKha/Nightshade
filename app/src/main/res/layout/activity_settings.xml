@@ -9,6 +9,21 @@
     android:backgroundTint="#F4EBE4"
     tools:context=".Settings">
 
+    <ImageView
+        android:id="@+id/backsettings"
+        android:layout_width="59dp"
+        android:layout_height="39dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="342dp"
+        android:layout_marginBottom="301dp"
+        android:src="@drawable/back_arrow2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
     <Switch
         android:id="@+id/switch_effects"
         android:layout_width="wrap_content"

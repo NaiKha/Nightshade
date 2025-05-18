@@ -1,10 +1,12 @@
 package com.example.nightshade;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -26,6 +28,19 @@ public class Settings extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        ImageView backButton = findViewById(R.id.backsettings);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Settings.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
+
+
         EditText focusTime = (EditText) findViewById(R.id.editTextNumber);
         Button saveButton =  (Button) findViewById(R.id.save_button);
         SharedPreferences sharedPreferences = getSharedPreferences("FocusTimePref", MODE_PRIVATE);
