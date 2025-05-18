@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Vibrator;
 import android.os.VibrationEffect;
@@ -34,6 +35,14 @@ public class InstructionActivity extends AppCompatActivity {
         startButton = findViewById(R.id.startButton);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         countdownPlayer = MediaPlayer.create(this, R.raw.countdown);
+
+        ImageView back = (ImageView) findViewById(R.id.backbalance);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(InstructionActivity.this, Movement.class));
+            }
+        });
 
 
         startButton.setOnClickListener(v -> {
