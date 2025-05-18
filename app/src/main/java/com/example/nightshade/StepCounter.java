@@ -138,7 +138,7 @@ public class StepCounter extends AppCompatActivity implements SensorEventListene
 
             //Shape.DrawableShape sloth_shape = new Shape.DrawableShape(confetti_sloth, true);
 
-            if (!goalReached && currentSteps >= 20) {
+            if (!goalReached && currentSteps >= 50) {
                 goalReached = true;
                 triggerCelebration();
             }
